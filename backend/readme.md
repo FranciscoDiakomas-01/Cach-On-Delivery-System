@@ -1,4 +1,4 @@
-# 🛒 E-commerce Moderno (Event-Driven + Delivery + COD)
+# 🛒 E-commerce (Event-Driven + Delivery + COD)
 
 ## 📌 Apresentação Técnica do Sistema
 

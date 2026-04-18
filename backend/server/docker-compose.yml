@@ -1,11 +1,10 @@
-
 services:
   app:
     build: .
     container_name: ecomerce_service
     restart: always
     ports:
-      - "8080:8080"
+      - '8080:8080'
     depends_on:
       - db
       - redis
@@ -14,6 +13,8 @@ services:
       DATABASE_URL: postgres://postgres:postgres@db:5432/app
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    networks:
+      - backend
 
   db:
     image: postgres:16
@@ -24,33 +25,68 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: app
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - pg_data:/var/lib/postgresql/data
+    networks:
+      - backend
 
   redis:
     image: redis:7-alpine
     container_name: redis_cache
     restart: always
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data
+    networks:
+      - backend
 
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq_broker
     restart: always
     ports:
-      - "5672:5672"   # broker
-      - "15672:15672" # painel web
+      - '5672:5672'
+      - '15672:15672'
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - backend
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus_monitoring
+    restart: always
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana_dashboard
+    restart: always
+    ports:
+      - '3001:3000'
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - monitoring
 
 volumes:
   pg_data:
   redis_data:
   rabbitmq_data:
+  grafana_data:
+
+networks:
+  backend:
+    driver: bridge
+  monitoring:
+    driver: bridge
