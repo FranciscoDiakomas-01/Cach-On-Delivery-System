@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -93,9 +92,11 @@ model User {
   role          UserRole @default(CUSTOMER)
   authProvider  AuthProvider @default(APP)
   isActive      Boolean  @default(true)
-  lastLoginAt   DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  curentLat       Float?
+  currentLog       Float?
+  maxLoad   Int @default(10)
   addresses     Address[]
   cart          Cart?
   orders        Order[]
@@ -104,7 +105,7 @@ model User {
   recoveries    Recovery[]
   wishlist      Wishlist[]
   reviews       Review[]
-  deliveryProfile DeliveryProfile?
+  deliveryAssignment DeliveryAssignment[]
   @@map("users")
 }
 
@@ -137,6 +138,7 @@ model Cart {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order Order?
   items     CartItem[]
   @@map("carts")
 }
@@ -144,11 +146,11 @@ model Cart {
 model CartItem {
   id        String  @id @default(uuid())
   cartId    String
-  variantId String
+  productId String
   quantity  Int     @default(1)
   cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  variant   Variant @relation(fields: [variantId], references: [id])
-  @@unique([cartId, variantId])
+  product Product @relation(fields: [productId], references: [id])
+  @@unique([cartId, productId])
   @@map("cart_items")
 }
 
@@ -166,9 +168,7 @@ model Category {
   updatedAt   DateTime @updatedAt
   parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
   children    Category[] @relation("CategoryTree")
-  products    ProductCategory[]
-  attributes  CategoryAttribute[]
-
+  products    Product[]
   @@map("categories")
 }
 
@@ -180,27 +180,27 @@ model Product {
   brandId     String
   isActive    Boolean  @default(true)
   isFeatured  Boolean  @default(false)
-  isDigital   Boolean  @default(false)
   weight      Float?
-  dimensions  Json?
-  seoTitle    String?
-  seoDescription String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  sku       String @unique
+  price     Decimal @db.Decimal(10,2)
+  compareAtPrice Decimal?
+  imageUrl  String?
+  sellCount Int @default(0)
+  available Int
+  reserved  Int
+  expiresAt   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cartItems CartItem[]
+  events    Event[]
+  reviews   Review[]
+  wishlist  Wishlist[]
   brand       Brand    @relation(fields: [brandId], references: [id])
-  variants    Variant[]
-  categories  ProductCategory[]
+  categories  Category[]
   @@map("products")
 }
 
-model ProductCategory {
-  productId String
-  categoryId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  category  Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  @@id([productId, categoryId])
-  @@map("product_categories")
-}
+
 
 model Brand {
   id          String   @id @default(uuid())
@@ -215,77 +215,12 @@ model Brand {
   @@map("brands")
 }
 
-model Variant {
-  id        String @id @default(uuid())
-  productId String
-  sku       String @unique
-  price     Decimal @db.Decimal(10,2)
-  compareAtPrice Decimal?
-  cost      Decimal?
-  isActive  Boolean @default(true)
-  imageUrl  String?
-  sellCount Int @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  inventory Inventory?
-  cartItems CartItem[]
-  orderItems OrderItem[]
-  events    Event[]
-  reviews   Review[]
-  wishlist  Wishlist[]
-  attributes VariantAttribute[]
-  @@map("variants")
-}
-
-model CategoryAttribute {
-  id         String @id @default(uuid())
-  categoryId String
-  name       String
-  type       AttributeType
-  required   Boolean @default(false)
-  createdAt  DateTime @default(now())
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  values     AttributeValue[]
-  @@unique([categoryId, name])
-  @@map("category_attributes")
-}
-
-model AttributeValue {
-  id          String @id @default(uuid())
-  attributeId String
-  value       String
-  attribute   CategoryAttribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
-  variantAttribute VariantAttribute[]
-  @@unique([attributeId, value])
-  @@map("attribute_values")
-}
-
-model VariantAttribute {
-  variantId String
-  valueId   String
-  variant Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
-  value   AttributeValue @relation(fields: [valueId], references: [id], onDelete: Cascade)
-  @@id([variantId, valueId])
-  @@map("variant_attributes")
-}
-
-model Inventory {
-  id        String @id @default(uuid())
-  variantId String @unique
-  available Int
-  reserved  Int
-  updatedAt DateTime @updatedAt
-  expiresAt   DateTime?
-  variant   Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
-  @@map("inventory")
-}
-
 
 model Order {
   id        String @id @default(uuid())
   userId    String
   status    OrderStatus @default(PENDING)
+  cartId String @unique
   subtotal  Decimal
   discount  Decimal @default(0)
   tax       Decimal @default(0)
@@ -298,8 +233,8 @@ model Order {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user    User @relation(fields: [userId], references: [id])
+  cart Cart @relation(fields: [cartId] , references: [id])
   address OrderAddress?
-  items   OrderItem[]
   delivery Delivery?
   @@map("orders")
 }
@@ -327,26 +262,11 @@ model OrderAddress {
   @@map("order_addresses")
 }
 
-model OrderItem {
-  id        String @id @default(uuid())
-  orderId   String
-  variantId String
-  quantity  Int
-  price     Decimal
-  discount  Decimal @default(0)
-  total     Decimal
-
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  variant Variant @relation(fields: [variantId], references: [id])
-
-  @@map("order_items")
-}
 
 model Delivery {
   id        String @id @default(uuid())
   orderId   String @unique
   status    DeliveryStatus @default(PENDING)
-  deliveryProfileId String
   qrCode    String
   expiresAt DateTime
   confirmedAt DateTime?
@@ -357,31 +277,18 @@ model Delivery {
   @@map("deliveries")
 }
 
-model DeliveryProfile {
-  id        String @id @default(uuid())
-  userId    String @unique
-  isOnline  Boolean @default(false)
-  curentLat       Float?
-  currentLog       Float?
-  maxLoad   Int @default(10)
-  lastSeen DateTime?
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  assignments DeliveryAssignment[]
-  @@map("delivery_profiles")
-}
-
 model DeliveryAssignment {
   id String @id @default(uuid())
   deliveryId String
-  deliveryProfileId String
+  userId String
   status AssignmentStatus @default(ASSIGNED)
   distance Float?
   assignedAt DateTime @default(now())
   completedAt DateTime?
   delivery Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
-  profile  DeliveryProfile @relation(fields: [deliveryProfileId], references: [id], onDelete: Cascade)
+  user  User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@index([deliveryId])
-  @@index([deliveryProfileId])
+  @@index([userId])
   @@map("delivery_assignments")
 }
 
@@ -417,13 +324,12 @@ model Notification {
 model Event {
   id String @id @default(uuid())
   userId String?
-  variantId String?
-  categoryId String?
+  productId String
   type EventTypes
   metadata Json?
   createdAt DateTime @default(now())
   user User? @relation(fields: [userId], references: [id])
-  variant Variant? @relation(fields: [variantId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
   @@map("events")
 }
 
@@ -444,21 +350,20 @@ model Review {
   id String @id @default(uuid())
   userId String
   productId String
-  variantId String?
   rating Int
   content String
   createdAt DateTime @default(now())
   user User @relation(fields: [userId], references: [id])
-  variant Variant? @relation(fields: [variantId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
   @@map("reviews")
 }
 
 model Wishlist {
   id String @id @default(uuid())
   userId String
-  variantId String
+  productId String
   createdAt DateTime @default(now())
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  variant Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
   @@map("wishlists")
 }

@@ -10,8 +10,6 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm migrate
-RUN pnpm studio
 RUN pnpm build
 
 EXPOSE 8080
