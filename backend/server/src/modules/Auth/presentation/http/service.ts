@@ -9,6 +9,8 @@ import OAuthFactoryUseCase from '../../applicatoins/use-cases/oauthUseCase';
 import AuthProvider from '../../domains/entities/AuthProvider';
 import OauthCallbackUseCase from '../../applicatoins/use-cases/oauthCallbackUseCase';
 import { OAuthProviderDto } from '../../applicatoins/dto/oauth.dto';
+import RegisterUseCase from '../../applicatoins/use-cases/registerUseCase';
+import RegisterDto from '../../applicatoins/dto/register.dto';
 
 @Injectable()
 export default class AuthService {
@@ -18,8 +20,15 @@ export default class AuthService {
     private readonly RecoveryUseCase: RecoveryUseCase,
     private readonly OAuthFactoryUseCase: OAuthFactoryUseCase,
     private readonly OauthCallbackUseCase: OauthCallbackUseCase,
+    private readonly RegisterUseCase: RegisterUseCase,
   ) {}
 
+  public async register(data: RegisterDto) {
+    const response = await this.RegisterUseCase.handle(data);
+    return {
+      data: response,
+    };
+  }
   public async login(data: LoginDto) {
     const response = await this.LoginUseCase.handle(data);
     return {

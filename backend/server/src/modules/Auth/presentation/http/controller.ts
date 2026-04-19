@@ -6,10 +6,19 @@ import { ForgotDto } from '../../applicatoins/dto/forgot.dto';
 import { RecoveryDTO } from '../../applicatoins/dto/recovery.dto';
 import type { Response } from 'express';
 import AuthProvider from '../../domains/entities/AuthProvider';
+import RegisterDto from '../../applicatoins/dto/register.dto';
 
 @Controller('auth')
 export default class AuthController {
   constructor(private readonly service: AuthService) {}
+
+  @Post('register')
+  @ApiOperation({
+    summary: 'Criação de  conta',
+  })
+  public async register(@Body() data: RegisterDto) {
+    return await this.service.register(data);
+  }
 
   @Post('login')
   @ApiOperation({

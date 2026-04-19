@@ -1,6 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import PrismaModule from './infra/database/Prisma/prisma.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
@@ -12,6 +15,7 @@ import { envSchema } from './core/config/env';
 import EmailModule from './infra/emails/module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'node:path';
+import { AuthMiddleware } from './modules/Auth/presentation/http/middleware';
 
 @Module({
   imports: [
@@ -49,4 +53,13 @@ import { join } from 'node:path';
     }),
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .exclude({ path: 'auth/*path', method: RequestMethod.ALL })
+      .exclude({ path: 'category', method: RequestMethod.GET })
+      .exclude({ path: 'category/*path', method: RequestMethod.GET })
+      .forRoutes('*');
+  }
+}

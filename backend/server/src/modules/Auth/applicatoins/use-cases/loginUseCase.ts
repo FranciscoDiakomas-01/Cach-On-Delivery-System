@@ -12,7 +12,6 @@ import {
   UserInactiveException,
   UserNotFoundException,
 } from '../shared/error';
-import AuthProvider from '../../domains/entities/AuthProvider';
 
 @Injectable()
 export default class LoginUseCase implements IUseCase<
@@ -32,9 +31,6 @@ export default class LoginUseCase implements IUseCase<
     }
     if (!user.isActive) {
       throw new UserInactiveException();
-    }
-    if (user.authProvider !== AuthProvider.APP) {
-      throw new InvalidCredentialsException();
     }
     const isPasswordMatch = await this.PasswordHasher.compare(
       data.password,
