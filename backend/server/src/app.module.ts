@@ -6,6 +6,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { CachingModule } from './infra/caching/module';
 import CategoryModule from './modules/category/presentation/http/category.module';
 import AuthModule from './modules/Auth/presentation/http/module';
+import { envSchema } from './core/config/env';
 
 @Module({
   imports: [
@@ -15,6 +16,10 @@ import AuthModule from './modules/Auth/presentation/http/module';
     AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      validate(config) {
+        envSchema.parse(config);
+        return config;
+      },
     }),
     ThrottlerModule.forRoot({
       throttlers: [

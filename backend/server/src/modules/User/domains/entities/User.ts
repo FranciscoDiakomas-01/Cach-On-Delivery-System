@@ -36,10 +36,6 @@ export default class User {
     return this.props.isActive;
   }
 
-  get isOnline() {
-    return this.props.isOnline;
-  }
-
   get location() {
     return {
       lat: this.props.curentLat,
@@ -57,16 +53,6 @@ export default class User {
 
   public deactivate() {
     this.props.isActive = false;
-  }
-
-  public setOnline() {
-    this.props.isOnline = true;
-    this.props.lastSeen = new Date();
-  }
-
-  public setOffline() {
-    this.props.isOnline = false;
-    this.props.lastSeen = new Date();
   }
 
   public updateLocation(lat: number, lng: number) {

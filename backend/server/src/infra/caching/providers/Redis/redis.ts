@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import Keyv from 'keyv';
 import KeyvRedis from '@keyv/redis';
-import { ICacheClient } from '../type';
+import { ICacheClient } from '../../type';
 
 @Injectable()
 export class RedisService implements ICacheClient {

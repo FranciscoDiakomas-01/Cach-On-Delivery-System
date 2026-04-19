@@ -37,12 +37,9 @@ export default class PrismaAuthRepository implements AuthRepository {
         role: data.role,
         authProvider: data.authProvider,
         isActive: data.isActive,
-        lastLoginAt: data.lastLoginAt,
-        isOnline: data.isOnline,
         curentLat: data.curentLat,
         currentLog: data.currentLog,
         maxLoad: data.maxLoad,
-        lastSeen: data.lastSeen,
       },
     });
     return created as IUser;
@@ -91,9 +88,9 @@ export default class PrismaAuthRepository implements AuthRepository {
     };
   }
 
-  async markRecoveryTokenAsUsed(token: string): Promise<void> {
-    await this.prisma.recovery.update({
-      where: { token },
+  async markRecoveryTokenAsUsed(userId: string): Promise<void> {
+    await this.prisma.recovery.updateMany({
+      where: { userId },
       data: {
         isUsed: true,
       },

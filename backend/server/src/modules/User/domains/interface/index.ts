@@ -10,10 +10,8 @@ export interface IUser {
   role: UserRole;
   authProvider: AuthProvider;
   isActive: boolean;
-  lastLoginAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
-  isOnline: boolean;
   curentLat: number;
   currentLog: number;
   maxLoad: number;
