@@ -7,14 +7,8 @@ import AuthRepository from '../../domains/repositories/abstraction';
 import { AUTH_REPOSITORY } from 'src/core/constants';
 import { BadRequestException, Inject } from '@nestjs/common';
 import JwtService from '../../domains/services/jwt';
-import {
-  InvalidCredentialsException,
-  UserInactiveException,
-  UserNotFoundException,
-} from '../shared/error';
+import { UserInactiveException, UserNotFoundException } from '../shared/error';
 import AuthProvider from '../../domains/entities/AuthProvider';
-import User from 'src/modules/User/domains/entities/User';
-import { IUser } from 'src/modules/User/domains/interface';
 import UserRole from 'src/modules/User/domains/entities/UserRole';
 
 export default class OauthCallbackUseCase implements IUseCase<
@@ -37,13 +31,11 @@ export default class OauthCallbackUseCase implements IUseCase<
       });
     }
     if (!oauthUser) {
-      console.log('ENTROI');
       throw new UserNotFoundException();
     }
     const { email, name } = oauthUser;
     const user = await this.repo.getByEmail(email);
     const oauthProvider = provider.toUpperCase() as AuthProvider;
-    console.log(name);
     if (!user) {
       const created = await this.repo.register({
         authProvider: oauthProvider,
@@ -53,8 +45,8 @@ export default class OauthCallbackUseCase implements IUseCase<
         email,
         isActive: true,
         id: crypto.randomUUID(),
-        firstName: name!,
-        lastName: '',
+        firstName: name?.split(' ')[0] ?? '',
+        lastName: name?.split(' ')[1] ?? '',
         role: UserRole.CUSTOMER,
         maxLoad: 10,
         updatedAt: new Date(),
@@ -72,15 +64,10 @@ export default class OauthCallbackUseCase implements IUseCase<
     if (!user.isActive) {
       throw new UserInactiveException();
     }
-    if (user.authProvider !== oauthProvider) {
-      throw new InvalidCredentialsException();
-    }
-
     const token = this.JwtService.sign({
       sub: user.id,
       role: user.role,
     });
-
     const { password, ...publicUser } = user;
     return {
       entitie: publicUser,
