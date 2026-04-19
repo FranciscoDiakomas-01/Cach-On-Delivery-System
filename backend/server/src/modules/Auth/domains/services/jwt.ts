@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 
+@Injectable()
 export default class JwtService {
-  private static readonly secret = process.env.JWT_SECRET as string;
+  private readonly secret = process.env.JWT_SECRET as string;
 
-  static sign(payload: object): string {
+  sign(payload: object): string {
     if (!this.secret) {
       throw new Error('JWT_SECRET not defined');
     }
@@ -13,7 +15,7 @@ export default class JwtService {
     });
   }
 
-  static verify<T = any>(token: string): T {
+  verify<T = any>(token: string): T {
     try {
       return jwt.verify(token, this.secret) as T;
     } catch (error) {

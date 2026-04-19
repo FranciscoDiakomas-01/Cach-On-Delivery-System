@@ -1,11 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { IUseCase } from 'src/core/types';
 import { LoginDto } from '../dto/login.dto';
 import { IAuthReturnType } from '../../domains/interface';
 import { Inject, Injectable } from '@nestjs/common';
 import AuthRepository from '../../domains/repositories/abstraction';
 import { AUTH_REPOSITORY } from 'src/core/constants';
-import AuthLoginFactory from '../factory/auth.factory';
+import PasswordHasher from '../../domains/services/encript';
+import JwtService from '../../domains/services/jwt';
+import {
+  InvalidCredentialsException,
+  UserInactiveException,
+  UserNotFoundException,
+} from '../shared/error';
+import AuthProvider from '../../domains/entities/AuthProvider';
 
 @Injectable()
 export default class LoginUseCase implements IUseCase<
@@ -13,11 +20,39 @@ export default class LoginUseCase implements IUseCase<
   IAuthReturnType
 > {
   constructor(
-    @Inject(AUTH_REPOSITORY) private readonly repository: AuthRepository,
+    private readonly PasswordHasher: PasswordHasher,
+    private readonly JwtService: JwtService,
+    @Inject(AUTH_REPOSITORY) private readonly repo: AuthRepository,
   ) {}
 
   public async handle(data: LoginDto): Promise<IAuthReturnType> {
-    const strategy = AuthLoginFactory.create(data.provider, this.repository);
-    return strategy.login(data as any);
+    const user = await this.repo.getByEmail(data.email);
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+    if (!user.isActive) {
+      throw new UserInactiveException();
+    }
+    if (user.authProvider !== AuthProvider.APP) {
+      throw new InvalidCredentialsException();
+    }
+    const isPasswordMatch = await this.PasswordHasher.compare(
+      data.password,
+      user.password!,
+    );
+    console.log(isPasswordMatch);
+    if (!isPasswordMatch) {
+      throw new InvalidCredentialsException();
+    }
+    const token = this.JwtService.sign({
+      sub: user.id,
+      role: user.role,
+    });
+
+    const { password, ...publicUser } = user;
+    return {
+      entitie: publicUser,
+      token,
+    };
   }
 }

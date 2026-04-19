@@ -57,7 +57,6 @@ export default class PrismaAuthRepository implements AuthRepository {
     userId: string;
     token: string;
     expiresAt: Date;
-    metadata: Record<string, string>;
   }): Promise<void> {
     await this.prisma.recovery.create({
       data: {
@@ -65,7 +64,6 @@ export default class PrismaAuthRepository implements AuthRepository {
         token: data.token,
         expiresAt: data.expiresAt,
         isUsed: false,
-        metadata: JSON.stringify(data.metadata),
       },
     });
   }
@@ -74,9 +72,13 @@ export default class PrismaAuthRepository implements AuthRepository {
     userId: string;
     expiresAt: Date;
     isUsed: boolean;
+    user: IUser;
   } | null> {
     const recovery = await this.prisma.recovery.findUnique({
       where: { token },
+      include: {
+        user: true,
+      },
     });
 
     if (!recovery) return null;
@@ -85,6 +87,7 @@ export default class PrismaAuthRepository implements AuthRepository {
       userId: recovery.userId,
       expiresAt: recovery.expiresAt,
       isUsed: recovery.isUsed,
+      user: recovery.user as IUser,
     };
   }
 

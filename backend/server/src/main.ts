@@ -7,6 +7,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import type { Request, Response } from 'express';
+import express from 'express';
 import { ValidationPipe } from '@nestjs/common';
 import compression from 'compression';
 import helmet from 'helmet';
@@ -21,7 +22,6 @@ async function bootstrap() {
     res.setHeader('Content-Type', register.contentType);
     res.end(await register.metrics());
   });
-
   const config = new DocumentBuilder()
     .setTitle('Ecommerce API')
     .setVersion('1.0')
@@ -37,7 +37,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors();
-
+  app.use(express.static('public'));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

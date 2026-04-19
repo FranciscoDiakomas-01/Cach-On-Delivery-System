@@ -14,6 +14,7 @@ export default abstract class AuthRepository {
     userId: string;
     expiresAt: Date;
     isUsed: boolean;
+    user: IUser;
   } | null>;
   abstract markRecoveryTokenAsUsed(userId: string): Promise<void>;
   abstract updatePassword(userId: string, password: string): Promise<void>;

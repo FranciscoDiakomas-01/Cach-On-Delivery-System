@@ -1,5 +1,5 @@
 export interface IUseCase<Input, Output> {
-  handle(data: Input): Promise<Output>;
+  handle(data: Input): Promise<Output> | Output;
 }
 
 export interface IPagination<T> {

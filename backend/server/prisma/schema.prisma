@@ -339,7 +339,6 @@ model Recovery {
   userId String
   isUsed Boolean @default(false)
   expiresAt DateTime
-  metadata Json
   usedAt DateTime?
   createdAt DateTime @default(now())
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

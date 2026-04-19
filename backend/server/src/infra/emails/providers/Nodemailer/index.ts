@@ -17,7 +17,7 @@ export interface IEmailPayload {
 }
 
 @Injectable()
-export class EmailService implements IEmailService {
+export class NodeMailerService implements IEmailService {
   private transporter: Transporter;
 
   constructor(private readonly config: ConfigService) {

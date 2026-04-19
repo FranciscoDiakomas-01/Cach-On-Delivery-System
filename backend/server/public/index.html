@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-commerce API</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Inter, Arial, sans-serif;
+        background: #0a0a0f;
+        color: #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* glow background */
+      .bg-glow {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(59, 130, 246, 0.25),
+          transparent 60%
+        );
+        filter: blur(80px);
+        top: -150px;
+        left: -150px;
+        z-index: 0;
+      }
+
+      .container {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 50px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 0 40px rgba(59, 130, 246, 0.15);
+        width: 380px;
+      }
+
+      h1 {
+        font-size: 26px;
+        margin-bottom: 10px;
+        letter-spacing: 0.5px;
+      }
+
+      p {
+        color: #9ca3af;
+        font-size: 14px;
+        margin-bottom: 25px;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 12px 18px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        color: white;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        transition: 0.25s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+      }
+
+      .tag {
+        font-size: 12px;
+        color: #60a5fa;
+        margin-bottom: 10px;
+        display: inline-block;
+        padding: 4px 10px;
+        border: 1px solid rgba(96, 165, 250, 0.3);
+        border-radius: 999px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="bg-glow"></div>
+
+    <div class="container">
+      <span class="tag">🚀 API STATUS: ONLINE</span>
+      <h1>Welcome to E-commerce API</h1>
+      <p>Modern backend for scalable commerce systems</p>
+
+      <a class="btn" href="/docs">Open Documentation</a>
+    </div>
+  </body>
+</html>
