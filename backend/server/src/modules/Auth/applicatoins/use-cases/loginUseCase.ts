@@ -40,7 +40,6 @@ export default class LoginUseCase implements IUseCase<
       data.password,
       user.password!,
     );
-    console.log(isPasswordMatch);
     if (!isPasswordMatch) {
       throw new InvalidCredentialsException();
     }

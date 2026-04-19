@@ -15,5 +15,4 @@ export interface IUser {
   curentLat: number;
   currentLog: number;
   maxLoad: number;
-  lastSeen: Date | null;
 }

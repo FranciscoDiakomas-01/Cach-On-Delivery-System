@@ -5,6 +5,10 @@ import ForgotUseCase from '../../applicatoins/use-cases/forgotUseCase';
 import { ForgotDto } from '../../applicatoins/dto/forgot.dto';
 import RecoveryUseCase from '../../applicatoins/use-cases/recoverieUseCase';
 import { RecoveryDTO } from '../../applicatoins/dto/recovery.dto';
+import OAuthFactoryUseCase from '../../applicatoins/use-cases/oauthUseCase';
+import AuthProvider from '../../domains/entities/AuthProvider';
+import OauthCallbackUseCase from '../../applicatoins/use-cases/oauthCallbackUseCase';
+import { OAuthProviderDto } from '../../applicatoins/dto/oauth.dto';
 
 @Injectable()
 export default class AuthService {
@@ -12,10 +16,24 @@ export default class AuthService {
     private readonly LoginUseCase: LoginUseCase,
     private readonly ForgotUseCase: ForgotUseCase,
     private readonly RecoveryUseCase: RecoveryUseCase,
+    private readonly OAuthFactoryUseCase: OAuthFactoryUseCase,
+    private readonly OauthCallbackUseCase: OauthCallbackUseCase,
   ) {}
 
   public async login(data: LoginDto) {
     const response = await this.LoginUseCase.handle(data);
+    return {
+      data: response,
+    };
+  }
+
+  public socialLogin(provider: AuthProvider) {
+    const response = this.OAuthFactoryUseCase.handle(provider);
+    return response;
+  }
+
+  public async callback(data: OAuthProviderDto) {
+    const response = await this.OauthCallbackUseCase.handle(data);
     return {
       data: response,
     };

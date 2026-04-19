@@ -1,10 +1,9 @@
-import User from 'src/modules/User/domains/entities/User';
 import { IUser } from 'src/modules/User/domains/interface';
 
 export default abstract class AuthRepository {
   abstract getByEmail(email: string): Promise<IUser | null>;
   abstract getById(id: string): Promise<IUser | null>;
-  abstract register(user: User): Promise<IUser>;
+  abstract register(user: IUser): Promise<IUser>;
   abstract createRecoveryToken(data: {
     userId: string;
     token: string;

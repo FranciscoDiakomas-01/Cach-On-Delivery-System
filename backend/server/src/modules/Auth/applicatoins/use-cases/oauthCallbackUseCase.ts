@@ -1,0 +1,90 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { IUseCase } from 'src/core/types';
+import { OAuthProviderDto } from '../dto/oauth.dto';
+import { IAuthReturnType } from '../../domains/interface';
+import OAuthFactory from '../OAuth/factory/oauth.factory';
+import AuthRepository from '../../domains/repositories/abstraction';
+import { AUTH_REPOSITORY } from 'src/core/constants';
+import { BadRequestException, Inject } from '@nestjs/common';
+import JwtService from '../../domains/services/jwt';
+import {
+  InvalidCredentialsException,
+  UserInactiveException,
+  UserNotFoundException,
+} from '../shared/error';
+import AuthProvider from '../../domains/entities/AuthProvider';
+import User from 'src/modules/User/domains/entities/User';
+import { IUser } from 'src/modules/User/domains/interface';
+import UserRole from 'src/modules/User/domains/entities/UserRole';
+
+export default class OauthCallbackUseCase implements IUseCase<
+  OAuthProviderDto,
+  IAuthReturnType
+> {
+  constructor(
+    private readonly OAuthFactory: OAuthFactory,
+    @Inject(AUTH_REPOSITORY) private readonly repo: AuthRepository,
+    private readonly JwtService: JwtService,
+  ) {}
+
+  public async handle(dto: OAuthProviderDto): Promise<IAuthReturnType> {
+    const { code, provider } = dto;
+    const strategy = this.OAuthFactory.create(provider);
+    const oauthUser = await strategy.login(code);
+    if (!strategy) {
+      throw new BadRequestException({
+        messsage: 'OAuth provider não implementado',
+      });
+    }
+    if (!oauthUser) {
+      console.log('ENTROI');
+      throw new UserNotFoundException();
+    }
+    const { email, name } = oauthUser;
+    const user = await this.repo.getByEmail(email);
+    const oauthProvider = provider.toUpperCase() as AuthProvider;
+    console.log(name);
+    if (!user) {
+      const created = await this.repo.register({
+        authProvider: oauthProvider,
+        createdAt: new Date(),
+        curentLat: 0,
+        currentLog: 0,
+        email,
+        isActive: true,
+        id: crypto.randomUUID(),
+        firstName: name!,
+        lastName: '',
+        role: UserRole.CUSTOMER,
+        maxLoad: 10,
+        updatedAt: new Date(),
+      });
+      const token = this.JwtService.sign({
+        sub: created.id,
+        role: created.role,
+      });
+      const { password, ...publicUser } = created;
+      return {
+        entitie: publicUser,
+        token,
+      };
+    }
+    if (!user.isActive) {
+      throw new UserInactiveException();
+    }
+    if (user.authProvider !== oauthProvider) {
+      throw new InvalidCredentialsException();
+    }
+
+    const token = this.JwtService.sign({
+      sub: user.id,
+      role: user.role,
+    });
+
+    const { password, ...publicUser } = user;
+    return {
+      entitie: publicUser,
+      token,
+    };
+  }
+}

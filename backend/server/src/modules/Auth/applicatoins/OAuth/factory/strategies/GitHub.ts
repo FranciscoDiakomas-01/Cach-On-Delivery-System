@@ -5,11 +5,18 @@
 import axios from 'axios';
 import { IOAuthService, OAuthUser } from '../interface';
 import AuthProvider from 'src/modules/Auth/domains/entities/AuthProvider';
+import { ConfigService } from '@nestjs/config';
 
 export class GithubOAuthService implements IOAuthService {
-  private clientId = process.env.GITHUB_CLIENT_ID!;
-  private clientSecret = process.env.GITHUB_CLIENT_SECRET!;
-  private redirectUri = process.env.GITHUB_REDIRECT_URI!;
+  private clientId = process.env.GOOGLE_CLIENT_ID!;
+  private clientSecret = process.env.GOOGLE_CLIENT_SECRET!;
+  private redirectUri = process.env.GOOGLE_REDIRECT_URI!;
+
+  constructor(private readonly config: ConfigService) {
+    this.clientId = this.config.get<string>('GITHUB_CLIENT_ID')!;
+    this.clientSecret = this.config.get<string>('GITHUB_CLIENT_SECRET')!;
+    this.redirectUri = this.config.get<string>('GITHUB_REDIRECT_URI')!;
+  }
   getAuthUrl(): string {
     return (
       `https://github.com/login/oauth/authorize` +

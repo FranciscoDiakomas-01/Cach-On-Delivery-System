@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import AuthRepository from 'src/modules/Auth/domains/repositories/abstraction';
-import User from 'src/modules/User/domains/entities/User';
 import { IUser } from 'src/modules/User/domains/interface';
 import { PrismaService } from '../prisma';
 
@@ -24,22 +23,20 @@ export default class PrismaAuthRepository implements AuthRepository {
     return user as IUser;
   }
 
-  async register(user: User): Promise<IUser> {
-    const data = user.toJSON();
-
+  async register(user: IUser): Promise<IUser> {
     const created = await this.prisma.user.create({
       data: {
-        id: data.id,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        password: data.password,
-        role: data.role,
-        authProvider: data.authProvider,
-        isActive: data.isActive,
-        curentLat: data.curentLat,
-        currentLog: data.currentLog,
-        maxLoad: data.maxLoad,
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        password: user.password,
+        role: user.role,
+        authProvider: user.authProvider,
+        isActive: user.isActive,
+        curentLat: user.curentLat,
+        currentLog: user.currentLog,
+        maxLoad: user.maxLoad,
       },
     });
     return created as IUser;

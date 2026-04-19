@@ -4,11 +4,18 @@ import axios from 'axios';
 import type { IOAuthService, OAuthUser } from '../interface';
 import AuthProvider from 'src/modules/Auth/domains/entities/AuthProvider';
 import { BadRequestException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 export class GoogleOAuthService implements IOAuthService {
   private clientId = process.env.GOOGLE_CLIENT_ID!;
   private clientSecret = process.env.GOOGLE_CLIENT_SECRET!;
   private redirectUri = process.env.GOOGLE_REDIRECT_URI!;
+
+  constructor(private readonly config: ConfigService) {
+    this.clientId = this.config.get<string>('GOOGLE_CLIENT_ID')!;
+    this.clientSecret = this.config.get<string>('GOOGLE_CLIENT_SECRET')!;
+    this.redirectUri = this.config.get<string>('GOOGLE_REDIRECT_URI')!;
+  }
 
   getAuthUrl(): string {
     return (

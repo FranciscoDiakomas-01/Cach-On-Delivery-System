@@ -8,6 +8,9 @@ import PasswordHasher from '../../domains/services/encript';
 import JwtService from '../../domains/services/jwt';
 import AuthEventSubService from '../../applicatoins/events/subscribe';
 import RecoveryUseCase from '../../applicatoins/use-cases/recoverieUseCase';
+import OAuthFactoryUseCase from '../../applicatoins/use-cases/oauthUseCase';
+import OAuthFactory from '../../applicatoins/OAuth/factory/oauth.factory';
+import OauthCallbackUseCase from '../../applicatoins/use-cases/oauthCallbackUseCase';
 
 @Module({
   providers: [
@@ -19,6 +22,9 @@ import RecoveryUseCase from '../../applicatoins/use-cases/recoverieUseCase';
     JwtService,
     AuthEventSubService,
     RecoveryUseCase,
+    OAuthFactoryUseCase,
+    OAuthFactory,
+    OauthCallbackUseCase,
   ],
   exports: [
     AuthModule,
@@ -29,6 +35,9 @@ import RecoveryUseCase from '../../applicatoins/use-cases/recoverieUseCase';
     JwtService,
     AuthEventSubService,
     RecoveryUseCase,
+    OAuthFactoryUseCase,
+    OAuthFactory,
+    OauthCallbackUseCase,
   ],
   controllers: [AuthController],
 })

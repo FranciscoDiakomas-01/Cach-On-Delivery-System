@@ -43,10 +43,6 @@ export default class User {
     };
   }
 
-  get lastSeen() {
-    return this.props.lastSeen;
-  }
-
   public activate() {
     this.props.isActive = true;
   }
