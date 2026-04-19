@@ -16,6 +16,8 @@ import EmailModule from './infra/emails/module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'node:path';
 import { AuthMiddleware } from './modules/Auth/presentation/http/middleware';
+import { ProductModule } from './modules/Product/presentation/htpp/module';
+import { BrandModule } from './modules/Brands/presentation/module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { AuthMiddleware } from './modules/Auth/presentation/http/middleware';
     CategoryModule,
     AuthModule,
     EmailModule,
+    ProductModule,
+    BrandModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),

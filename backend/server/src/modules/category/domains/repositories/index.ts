@@ -9,4 +9,5 @@ export default abstract class CategoryRepository {
   abstract getByTitle(
     title: string,
   ): Promise<ICategory | null> | ICategory | null;
+  abstract toogle(id: string, status: boolean): Promise<void>;
 }

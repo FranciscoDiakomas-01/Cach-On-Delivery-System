@@ -178,16 +178,16 @@ model Product {
   slug        String   @unique
   description String
   brandId     String
+  categoryId String
   isActive    Boolean  @default(true)
   isFeatured  Boolean  @default(false)
-  weight      Float?
   sku       String @unique
   price     Decimal @db.Decimal(10,2)
   compareAtPrice Decimal?
   imageUrl  String?
   sellCount Int @default(0)
-  available Int
-  reserved  Int
+  available Int 
+  reserved  Int @default(0)
   expiresAt   DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -196,7 +196,7 @@ model Product {
   reviews   Review[]
   wishlist  Wishlist[]
   brand       Brand    @relation(fields: [brandId], references: [id])
-  categories  Category[]
+  category Category @relation(fields: [ categoryId] , references: [id])
   @@map("products")
 }
 

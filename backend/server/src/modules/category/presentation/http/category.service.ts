@@ -5,6 +5,7 @@ import GetCategoryUseCase from '../../application/use-cases/getCategoryUsecase';
 import UpdateCategoryUseCase from '../../application/use-cases/updateCategoryUseCase';
 import { UpdateCategoryDto } from '../../application/dto/update';
 import { CreateCategoryDto } from '../../application/dto/create';
+import ToglgleCategoryUseCase from '../../application/use-cases/toglgleCategoryUseCase';
 
 @Injectable()
 export default class CategoryService {
@@ -13,6 +14,7 @@ export default class CategoryService {
     private readonly GetCategoryByIdUseCase: GetCategoryByIdUseCase,
     private readonly GetCategoryUseCase: GetCategoryUseCase,
     private readonly UpdateCategoryUseCase: UpdateCategoryUseCase,
+    private readonly ToglgleCategoryUseCase: ToglgleCategoryUseCase,
   ) {}
 
   public async get() {
@@ -42,6 +44,14 @@ export default class CategoryService {
     const created = await this.CreateCategoryUseCase.handle(data);
     return {
       data: created,
+    };
+  }
+
+  public async toogle(id: string) {
+    const updated = await this.ToglgleCategoryUseCase.handle(id);
+
+    return {
+      data: updated,
     };
   }
 }

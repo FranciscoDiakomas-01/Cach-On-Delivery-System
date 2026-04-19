@@ -18,7 +18,10 @@ export default class GetCategoryUseCase implements IUseCase<
   ) {}
 
   public async handle(): Promise<IPagination<ICategory>> {
+    console.log('AAA');
+
     const cachedData = await this.redis.get<ICategory[]>('categories');
+    console.log(cachedData);
     if (cachedData) {
       return {
         items: cachedData,

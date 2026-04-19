@@ -5,6 +5,7 @@ import GetCategoryByIdUseCase from '../../application/use-cases/getCategoryByIdU
 import GetCategoryUseCase from '../../application/use-cases/getCategoryUsecase';
 import UpdateCategoryUseCase from '../../application/use-cases/updateCategoryUseCase';
 import CategoryController from './catgory.controller';
+import ToglgleCategoryUseCase from '../../application/use-cases/toglgleCategoryUseCase';
 
 @Module({
   providers: [
@@ -13,6 +14,7 @@ import CategoryController from './catgory.controller';
     GetCategoryByIdUseCase,
     GetCategoryUseCase,
     UpdateCategoryUseCase,
+    ToglgleCategoryUseCase,
   ],
   exports: [
     CreateCategoryUseCase,
@@ -20,6 +22,7 @@ import CategoryController from './catgory.controller';
     GetCategoryByIdUseCase,
     GetCategoryUseCase,
     UpdateCategoryUseCase,
+    ToglgleCategoryUseCase,
   ],
   controllers: [CategoryController],
 })

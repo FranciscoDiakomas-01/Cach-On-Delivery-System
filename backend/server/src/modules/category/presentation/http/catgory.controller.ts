@@ -6,6 +6,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import CategoryService from './category.service';
 import { UpdateCategoryDto } from '../../application/dto/update';
@@ -31,6 +32,13 @@ export default class CategoryController {
   })
   public async getById(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.service.getById(id);
+  }
+  @Put('/:id')
+  @ApiOperation({
+    summary: 'toogle de categoria',
+  })
+  public async toogle(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.service.toogle(id);
   }
 
   @Patch('/:id')

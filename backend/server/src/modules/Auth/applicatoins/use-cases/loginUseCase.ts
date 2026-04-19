@@ -32,9 +32,10 @@ export default class LoginUseCase implements IUseCase<
     if (!user.isActive) {
       throw new UserInactiveException();
     }
+
     const isPasswordMatch = await this.PasswordHasher.compare(
       data.password,
-      user.password!,
+      user.password ?? '',
     );
     if (!isPasswordMatch) {
       throw new InvalidCredentialsException();

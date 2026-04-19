@@ -10,3 +10,9 @@ export interface IPagination<T> {
   hasNexPage: boolean | null;
   hasPrevPage: boolean | null;
 }
+
+export interface IPagintionProps {
+  page: number;
+  search?: string;
+  limit: number;
+}

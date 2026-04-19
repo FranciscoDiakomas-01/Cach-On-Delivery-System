@@ -60,5 +60,4 @@ export default class CreateCategoryUseCase implements IUseCase<
 
     return slug;
   }
-  x;
 }

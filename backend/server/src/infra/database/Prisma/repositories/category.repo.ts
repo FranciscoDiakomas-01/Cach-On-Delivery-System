@@ -9,7 +9,14 @@ export default class PrismaCategoryRepository extends CategoryRepository {
   constructor(private readonly PrismaService: PrismaService) {
     super();
   }
-
+  public async toogle(id: string, status: boolean): Promise<void> {
+    await this.PrismaService.category.update({
+      where: { id },
+      data: {
+        isActive: status,
+      },
+    });
+  }
   public async findById(id: string): Promise<ICategory | null> {
     const category = await this.PrismaService.category.findFirst({
       where: {
@@ -25,6 +32,9 @@ export default class PrismaCategoryRepository extends CategoryRepository {
   public async get(): Promise<ICategory[]> {
     const categories = await this.PrismaService.category.findMany({
       orderBy: [{ isFeatured: 'desc' }, { createdAt: 'desc' }],
+      where: {
+        isActive: true,
+      },
     });
     return categories;
   }
