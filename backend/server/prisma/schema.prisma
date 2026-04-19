@@ -32,14 +32,10 @@ enum AttributeType {
 
 enum EventTypes {
   VIEW
-  CLICK
-  ADD_TO_CART
-  REMOVE_FROM_CART
   WISHLIST
   CHECKOUT
+  UNCHEKOUT
   PURCHASE
-  SEARCH
-  CATEGORY_VIEW
 }
 
 enum OrderStatus {
@@ -193,14 +189,11 @@ model Product {
   updatedAt DateTime @updatedAt
   cartItems CartItem[]
   events    Event[]
-  reviews   Review[]
   wishlist  Wishlist[]
   brand       Brand    @relation(fields: [brandId], references: [id])
   category Category @relation(fields: [ categoryId] , references: [id])
   @@map("products")
 }
-
-
 
 model Brand {
   id          String   @id @default(uuid())
@@ -215,18 +208,17 @@ model Brand {
   @@map("brands")
 }
 
-
 model Order {
   id        String @id @default(uuid())
   userId    String
   status    OrderStatus @default(PENDING)
   cartId String @unique
+  coupunId String?
   subtotal  Decimal
   discount  Decimal @default(0)
   tax       Decimal @default(0)
   shipping  Decimal @default(0)
   total     Decimal
-  couponCode String?
   paymentMethod Paymethod
   paymentStatus PaymentStatus @default(PENDING)
   paidAt DateTime?
@@ -234,8 +226,10 @@ model Order {
   updatedAt DateTime @updatedAt
   user    User @relation(fields: [userId], references: [id])
   cart Cart @relation(fields: [cartId] , references: [id])
+  coupon Coupon? @relation(fields: [coupunId] , references: [id])
   address OrderAddress?
   delivery Delivery?
+  reviews Review[]
   @@map("orders")
 }
 
@@ -261,7 +255,6 @@ model OrderAddress {
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
   @@map("order_addresses")
 }
-
 
 model Delivery {
   id        String @id @default(uuid())
@@ -304,6 +297,7 @@ model Coupon {
   isActive Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Order Order[]
   @@map("coupons")
 }
 
@@ -326,11 +320,11 @@ model Event {
   userId String?
   productId String
   type EventTypes
-  metadata Json?
   createdAt DateTime @default(now())
   user User? @relation(fields: [userId], references: [id])
   product Product @relation(fields: [productId], references: [id])
   @@map("events")
+
 }
 
 model Recovery {
@@ -348,12 +342,12 @@ model Recovery {
 model Review {
   id String @id @default(uuid())
   userId String
-  productId String
+  orderId String
   rating Int
   content String
   createdAt DateTime @default(now())
   user User @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  order Order @relation(fields: [orderId], references: [id])
   @@map("reviews")
 }
 
@@ -365,4 +359,5 @@ model Wishlist {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
   @@map("wishlists")
+  @@unique([userId, productId])
 }

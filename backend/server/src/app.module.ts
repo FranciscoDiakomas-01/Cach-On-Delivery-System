@@ -18,6 +18,8 @@ import { join } from 'node:path';
 import { AuthMiddleware } from './modules/Auth/presentation/http/middleware';
 import { ProductModule } from './modules/Product/presentation/htpp/module';
 import { BrandModule } from './modules/Brands/presentation/module';
+import { EventModule } from './modules/Event/module';
+import WishListModule from './modules/Wishlist/presentation/htpp/module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { BrandModule } from './modules/Brands/presentation/module';
     EmailModule,
     ProductModule,
     BrandModule,
+    EventModule,
+    WishListModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),

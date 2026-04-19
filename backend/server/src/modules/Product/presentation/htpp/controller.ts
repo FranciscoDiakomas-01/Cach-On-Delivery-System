@@ -21,6 +21,7 @@ import type { IPagintionProps } from 'src/core/types';
 import { PaginationPipe } from 'src/core/pipes/pagination.pipe';
 import { CreateProductDto } from '../../application/dto/create';
 import { UpdateProductUseCase } from '../../application/use-cases/UpdateProductUseCase';
+import { CurrentUserId } from 'src/modules/Auth/presentation/http/decorator';
 
 @Controller('products')
 @ApiTags('Products')
@@ -41,10 +42,17 @@ export class ProductController {
     return this.getProductsUC.handle(query);
   }
 
-  @Get(':id')
+  @Get(':unique')
   @ApiOperation({ summary: 'Buscar produto por dados únicos' })
-  async getById(@Param('id') id: string) {
-    return this.getByUniqueUC.handle(id);
+  async getById(
+    @Param('unique') unique: string,
+    @CurrentUserId() userId: string,
+  ) {
+    const data = await this.getByUniqueUC.handle({
+      unique,
+      userId,
+    });
+    return data;
   }
 
   @Get('category/:id')

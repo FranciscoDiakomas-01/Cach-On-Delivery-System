@@ -1,10 +1,14 @@
 export enum EventType {
   VIEW = 'VIEW',
-  CLICK = 'CLICK',
-  ADD_TO_CART = 'ADD_TO_CART',
-  REMOVE_FROM_CART = 'REMOVE_FROM_CART',
   WISHLIST = 'WISHLIST',
   CHECKOUT = 'CHECKOUT',
   PURCHASE = 'PURCHASE',
-  SEARCH = 'SEARCH',
+  UNCHEKOUT = 'UNCHEKOUT',
+}
+
+export interface ProductEventPayload {
+  userId: string;
+  productId: string;
+  timestamp?: Date;
+  metadata?: Record<string, any>;
 }
