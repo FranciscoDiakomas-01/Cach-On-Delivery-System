@@ -33,15 +33,13 @@ export default class CoupunController {
     return data;
   }
 
-  @Get(':id')
+  @Get(':unique')
   @ApiOperation({
     summary: 'Detalhe de coupun',
   })
-  public async getId(@Param('id') id: string) {
-    const data = await this.GetCouponUseCase.isDisponible(id);
-    return {
-      data,
-    };
+  public async getUnique(@Param('unique') unique: string) {
+    const data = await this.GetCouponUseCase.isDisponible(unique);
+    return data;
   }
 
   @Post()

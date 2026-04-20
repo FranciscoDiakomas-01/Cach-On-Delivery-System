@@ -34,7 +34,7 @@ export default class GetCouponUseCase {
       throw new NotFoundCoupunError();
     }
     if (
-      (coupun.maxUses && coupun.maxUses >= coupun.usedCount) ||
+      (coupun.maxUses && coupun.usedCount >= coupun.maxUses) ||
       !coupun.isActive
     ) {
       await this.repo.toogleActive(coupun.id, false);

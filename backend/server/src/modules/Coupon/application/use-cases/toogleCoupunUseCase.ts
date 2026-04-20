@@ -23,7 +23,7 @@ export default class ToggleCoupunUseCase implements IUseCase<
     if (!coupun) {
       throw new NotFoundCoupunError();
     }
-    await this.repo.toogleActive(id, coupun.isActive);
+    await this.repo.toogleActive(id, !coupun.isActive);
     await this.cache.delete('coupuns');
     return {
       message: 'Actualizado com sucesso',
