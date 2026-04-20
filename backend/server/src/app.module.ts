@@ -21,6 +21,7 @@ import { BrandModule } from './modules/Brands/presentation/module';
 import { EventModule } from './modules/Event/module';
 import WishListModule from './modules/Wishlist/presentation/htpp/module';
 import { RecommendationModule } from './modules/Recomendation/presentation/controllers/module';
+import CoupunModule from './modules/Coupon/presentation/http/module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { RecommendationModule } from './modules/Recomendation/presentation/contr
     EventModule,
     WishListModule,
     RecommendationModule,
+    CoupunModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
