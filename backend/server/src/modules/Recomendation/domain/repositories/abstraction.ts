@@ -1,10 +1,6 @@
-import { IPagination } from 'src/core/types';
+import Event from 'src/modules/Event/domains/entities/Event';
 import { Product } from 'src/modules/Product/domains/entities/Product';
-
-export abstract class RecommendationRepository {
-  abstract getForUser(userId: string): Promise<IPagination<Product>>;
-  abstract getForProduct(productId: string): Promise<IPagination<Product>>;
-  abstract getTrending(): Promise<IPagination<Product>>;
-  abstract save(event): Promise<void>;
-  abstract updateScores(): Promise<void>;
+export default abstract class RecommendationRepository {
+  abstract getUserEvents(userId: string): Promise<Event[]>;
+  abstract getProductsByIds(ids: string[]): Promise<Product[]>;
 }

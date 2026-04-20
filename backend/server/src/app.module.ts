@@ -20,6 +20,7 @@ import { ProductModule } from './modules/Product/presentation/htpp/module';
 import { BrandModule } from './modules/Brands/presentation/module';
 import { EventModule } from './modules/Event/module';
 import WishListModule from './modules/Wishlist/presentation/htpp/module';
+import { RecommendationModule } from './modules/Recomendation/presentation/controllers/module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import WishListModule from './modules/Wishlist/presentation/htpp/module';
     BrandModule,
     EventModule,
     WishListModule,
+    RecommendationModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
@@ -67,7 +69,12 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .exclude({ path: 'auth/*path', method: RequestMethod.ALL })
       .exclude({ path: 'category', method: RequestMethod.GET })
+      .exclude({ path: 'products', method: RequestMethod.GET })
       .exclude({ path: 'category/*path', method: RequestMethod.GET })
+      .exclude({ path: 'products/*path', method: RequestMethod.GET })
+      .exclude({ path: 'category', method: RequestMethod.GET })
+      .exclude({ path: 'recommendations/*path', method: RequestMethod.GET })
+
       .forRoutes('*');
   }
 }

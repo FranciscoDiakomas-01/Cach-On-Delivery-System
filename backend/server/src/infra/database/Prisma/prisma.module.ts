@@ -6,6 +6,7 @@ import {
   CATEGORY_REPOSITORY,
   EVENT_REPOSITORY,
   PRODUCT_REPOSITORY,
+  RECOMMENDATION_REPOSITORY,
   WISHLIST_REPOSITORY,
 } from 'src/core/constants';
 import { PrismaService } from './prisma';
@@ -14,6 +15,7 @@ import { PrismaProductRepository } from './repositories/PrismaProductRepository'
 import PrismaBrandRepository from './repositories/PrismaBrandRepository';
 import PrismaEventRepository from './repositories/PrismaEventRepository';
 import PrismaWishlistRepository from './repositories/PrismaWishlistRepository';
+import { PrismaRecommendationRepository } from './repositories/PrismaRecommendationRepository';
 @Global()
 @Module({
   providers: [
@@ -41,6 +43,10 @@ import PrismaWishlistRepository from './repositories/PrismaWishlistRepository';
       provide: WISHLIST_REPOSITORY,
       useClass: PrismaWishlistRepository,
     },
+    {
+      provide: RECOMMENDATION_REPOSITORY,
+      useClass: PrismaRecommendationRepository,
+    },
     PrismaService,
   ],
   exports: [
@@ -51,6 +57,7 @@ import PrismaWishlistRepository from './repositories/PrismaWishlistRepository';
     BRAND_REPOSITORY,
     EVENT_REPOSITORY,
     WISHLIST_REPOSITORY,
+    RECOMMENDATION_REPOSITORY,
   ],
 })
 export default class PrismaModule {}

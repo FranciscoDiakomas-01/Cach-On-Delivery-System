@@ -40,7 +40,12 @@ export default class PrismaWishlistRepository implements WishlistRepository {
           userId,
         },
         include: {
-          product: true,
+          product: {
+            include: {
+              category: true,
+              brand: true,
+            },
+          },
         },
       }),
       this.prisma.wishlist.count({

@@ -41,6 +41,10 @@ export class PrismaProductRepository implements ProductRepository {
           ...where,
           isActive: true,
         },
+        include: {
+          category: true,
+          brand: true,
+        },
       }),
       this.prisma.product.count({
         where,
@@ -64,6 +68,10 @@ export class PrismaProductRepository implements ProductRepository {
       where: {
         OR: [{ id: unique }, { slug: unique }, { sku: unique }],
         isActive: true,
+      },
+      include: {
+        category: true,
+        brand: true,
       },
     }) as Promise<Product | null>;
   }
@@ -164,6 +172,10 @@ export class PrismaProductRepository implements ProductRepository {
         },
         skip,
         take: limit,
+        include: {
+          category: true,
+          brand: true,
+        },
       }),
       this.prisma.product.count({
         where: {

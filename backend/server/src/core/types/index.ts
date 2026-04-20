@@ -9,6 +9,8 @@ export interface IPagination<T> {
   limit: number | null;
   hasNexPage: boolean | null;
   hasPrevPage: boolean | null;
+  nextCursor?: string | null;
+  prevCursor?: string | null;
 }
 
 export interface IPagintionProps {
