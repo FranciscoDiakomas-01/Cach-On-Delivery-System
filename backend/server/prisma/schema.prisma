@@ -56,6 +56,8 @@ enum DeliveryStatus {
   DELIVERED
   FAILED
   RETURNED
+  CLIENT_RECEIVED
+  DELIVERY_CONFIRMED
 }
 
 enum Paymethod {
@@ -93,7 +95,6 @@ model User {
   curentLat       Float?
   currentLog       Float?
   maxLoad   Int @default(10)
-  addresses     Address[]
   cart          Cart?
   orders        Order[]
   notifications Notification[]
@@ -105,28 +106,7 @@ model User {
   @@map("users")
 }
 
-model Address {
-  id            String   @id @default(uuid())
-  userId        String
-  recipientName String
-  phone         String
-  country       String
-  state         String
-  city          String
-  district      String?
-  street        String
-  houseNumber   String?
-  postalCode    String?
-  lat           Float
-  lng           Float
-  reference     String?
-  instructions  String?
-  isDefault     Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@map("addresses")
-}
+
 
 model Cart {
   id        String   @id @default(uuid())
@@ -210,7 +190,7 @@ model Brand {
 
 model Order {
   id        String @id @default(uuid())
-  userId    String
+  costumerId    String
   status    OrderStatus @default(PENDING)
   cartId String @unique
   coupunId String?
@@ -224,16 +204,16 @@ model Order {
   paidAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user    User @relation(fields: [userId], references: [id])
+  user    User @relation(fields: [costumerId], references: [id])
   cart Cart @relation(fields: [cartId] , references: [id])
   coupon Coupon? @relation(fields: [coupunId] , references: [id])
-  address OrderAddress?
+  address Adress?
   delivery Delivery?
   reviews Review[]
   @@map("orders")
 }
 
-model OrderAddress {
+model Adress {
   id        String @id @default(uuid())
   orderId String @unique
   recipientName String
@@ -249,7 +229,6 @@ model OrderAddress {
   lng           Float
   reference     String?
   instructions  String?
-  isDefault     Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -260,7 +239,6 @@ model Delivery {
   id        String @id @default(uuid())
   orderId   String @unique
   status    DeliveryStatus @default(PENDING)
-  qrCode    String
   expiresAt DateTime
   confirmedAt DateTime?
   deliveredAt DateTime?
