@@ -170,6 +170,13 @@ export class PrismaProductRepository implements ProductRepository {
           categoryId,
           isActive: true,
         },
+        orderBy: [
+          { sellCount: 'desc' },
+          { createdAt: 'desc' },
+          { available: 'desc' },
+          { price: 'asc' },
+          { title: 'asc' },
+        ],
         skip,
         take: limit,
         include: {

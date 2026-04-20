@@ -71,7 +71,6 @@ export class AppModule implements NestModule {
       .exclude({ path: 'category', method: RequestMethod.GET })
       .exclude({ path: 'products', method: RequestMethod.GET })
       .exclude({ path: 'category/*path', method: RequestMethod.GET })
-      .exclude({ path: 'products/*path', method: RequestMethod.GET })
       .exclude({ path: 'category', method: RequestMethod.GET })
       .exclude({ path: 'recommendations/*path', method: RequestMethod.GET })
 
