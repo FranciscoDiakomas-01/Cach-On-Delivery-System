@@ -41,7 +41,7 @@ export class ProductEventHandler {
     });
   }
 
-  @OnEvent('product.purchased')
+  @OnEvent('cart.item.added')
   async handlePurchase(payload: IPayloadEventProduct) {
     await this.repo.register({
       event: EventType.PURCHASE,
@@ -50,7 +50,7 @@ export class ProductEventHandler {
     });
   }
 
-  @OnEvent('product.uncarted')
+  @OnEvent('cart.item.removed')
   async handleUncheckout(payload: IPayloadEventProduct) {
     await this.repo.register({
       event: EventType.UNCHEKOUT,
