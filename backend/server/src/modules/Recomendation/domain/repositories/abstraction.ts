@@ -10,6 +10,7 @@ export default abstract class RecommendationRepository {
   abstract getSimilarProducts(
     categoryIds: string[],
     excludeIds: string[],
+    pagination: IPagintionProps,
   ): Promise<Product[]>;
   abstract getUserEvents(userId: string): Promise<Event[]>;
 }

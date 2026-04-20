@@ -24,7 +24,7 @@ export class GetRecomendationUseCase {
     if (!events.length) {
       const data = await this.productRepository.get({
         limit: 50,
-        page: page || 1,
+        page: page,
       });
 
       return {
@@ -55,10 +55,13 @@ export class GetRecomendationUseCase {
     const interactedArray = [...interactedIds];
     const [interacted, similar, unInteracted] = await Promise.all([
       this.repository.getInteractedProducts(interactedArray),
-      this.repository.getSimilarProducts(categoryArray, interactedArray),
+      this.repository.getSimilarProducts(categoryArray, interactedArray, {
+        limit: 50,
+        page: page,
+      }),
       this.repository.getUnInteractedProducts(userId, {
         limit: 50,
-        page: page || 1,
+        page: page,
       }),
     ]);
 

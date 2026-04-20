@@ -36,6 +36,7 @@ export class PrismaRecommendationRepository extends RecommendationRepository {
   public async getSimilarProducts(
     categoryIds: string[],
     excludeIds: string[],
+    pagination: IPagintionProps,
   ): Promise<Product[]> {
     const products = await this.prisma.product.findMany({
       where: {
@@ -44,6 +45,8 @@ export class PrismaRecommendationRepository extends RecommendationRepository {
         isActive: true,
         available: { gt: 0 },
       },
+      take: pagination.limit,
+      skip: (pagination.page - 1) * pagination.limit,
     });
     return products as any as Product[];
   }
