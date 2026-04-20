@@ -1,4 +1,4 @@
-import { IUser } from 'src/modules/User/domains/interface';
+import { IUser } from 'src/modules/User/domains/entities/User';
 
 export interface IAuthReturnType {
   entitie: IUser;

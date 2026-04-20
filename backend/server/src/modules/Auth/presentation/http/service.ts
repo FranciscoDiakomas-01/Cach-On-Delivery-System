@@ -48,7 +48,10 @@ export default class AuthService {
     };
   }
   public async forgot(data: ForgotDto) {
-    await this.ForgotUseCase.handle(data.email);
+    await this.ForgotUseCase.handle({
+      email: data.email,
+      canEmit: true,
+    });
     return {
       message: `Enviamos um email para ${data.email} com as informações de recuperação de conta`,
     };

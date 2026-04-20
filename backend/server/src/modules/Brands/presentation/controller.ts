@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -14,6 +15,7 @@ import { GetAllBrandsUseCase } from '../applications/use-cases/GetAllBrandsUseCa
 import { UpdateBrandUseCase } from '../applications/use-cases/UpdateBrandUseCase';
 import { CreateBrandDto } from '../applications/dto/CreateBrandDto';
 import { ToggleBrandUseCase } from '../applications/use-cases/ToggleBrandUseCase';
+import { AdminGuard } from 'src/modules/User/presentation/http/guards/AdminGuard';
 
 @Controller('brands')
 @ApiTags('Brands')
@@ -26,6 +28,7 @@ export class BrandController {
   ) {}
 
   @Post()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Criar brand' })
   create(@Body() dto: CreateBrandDto) {
     return this.createUC.handle(dto);
@@ -44,6 +47,7 @@ export class BrandController {
   }
 
   @Patch(':id')
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Atualizar brand' })
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -56,6 +60,7 @@ export class BrandController {
   }
 
   @Patch(':id/toggle')
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Ativar/Desativar brand' })
   async toggle(@Param('id', new ParseUUIDPipe()) id: string) {
     await this.toggleUC.handle(id);

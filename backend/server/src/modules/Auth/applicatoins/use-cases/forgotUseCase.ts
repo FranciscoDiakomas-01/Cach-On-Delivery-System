@@ -8,7 +8,10 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export default class ForgotUseCase implements IUseCase<string, void> {
+export default class ForgotUseCase implements IUseCase<
+  { email: string; canEmit: boolean },
+  { raw: string; expiresAt: Date }
+> {
   constructor(
     @Inject(AUTH_REPOSITORY)
     private readonly repository: AuthRepository,
@@ -17,8 +20,14 @@ export default class ForgotUseCase implements IUseCase<string, void> {
     private readonly config: ConfigService,
   ) {}
 
-  public async handle(data: string): Promise<void> {
-    const user = await this.repository.getByEmail(data);
+  public async handle({
+    email,
+    canEmit = true,
+  }: {
+    email: string;
+    canEmit: boolean;
+  }): Promise<{ raw: string; expiresAt: Date }> {
+    const user = await this.repository.getByEmail(email);
     if (!user || !user.isActive) {
       throw new UserNotFoundException();
     }
@@ -31,12 +40,15 @@ export default class ForgotUseCase implements IUseCase<string, void> {
       userId: user.id,
       expiresAt,
     });
-    this.eventEmitter.emit('auth.forgot', {
-      userId: user.id,
-      email: user.email,
-      token: raw,
-      expiresAt,
-      name: `${user.firstName} ${user.lastName}`,
-    });
+    if (canEmit) {
+      this.eventEmitter.emit('auth.forgot', {
+        userId: user.id,
+        email: user.email,
+        token: raw,
+        expiresAt,
+        name: `${user.firstName} ${user.lastName}`,
+      });
+    }
+    return { raw, expiresAt };
   }
 }

@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import CreateCoupunUseCase from '../../application/use-cases/createCoupunUsecase';
 import GetCouponUseCase from '../../application/use-cases/getCoupunUsecae';
@@ -14,6 +15,7 @@ import ToggleCoupunUseCase from '../../application/use-cases/toogleCoupunUseCase
 import UpdateCoupunUseCase from '../../application/use-cases/updateUseCase';
 import CreateCoupunDto from '../../application/dto/create';
 import { ApiOperation } from '@nestjs/swagger';
+import { AdminGuard } from 'src/modules/User/presentation/http/guards/AdminGuard';
 
 @Controller('coupun')
 export default class CoupunController {
@@ -43,6 +45,7 @@ export default class CoupunController {
   }
 
   @Post()
+  @UseGuards(AdminGuard)
   @ApiOperation({
     summary: 'Criar de coupun',
   })
@@ -53,6 +56,7 @@ export default class CoupunController {
     };
   }
   @Put(':id')
+  @UseGuards(AdminGuard)
   @ApiOperation({
     summary: 'Actualizar de coupun',
   })
@@ -68,6 +72,7 @@ export default class CoupunController {
   }
 
   @Patch(':id')
+  @UseGuards(AdminGuard)
   @ApiOperation({
     summary: 'Toogle de coupun',
   })

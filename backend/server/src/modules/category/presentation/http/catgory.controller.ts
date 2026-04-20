@@ -7,11 +7,13 @@ import {
   Patch,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import CategoryService from './category.service';
 import { UpdateCategoryDto } from '../../application/dto/update';
 import { CreateCategoryDto } from '../../application/dto/create';
 import { ApiOperation } from '@nestjs/swagger';
+import { AdminGuard } from 'src/modules/User/presentation/http/guards/AdminGuard';
 
 @Controller('category')
 export default class CategoryController {
@@ -34,6 +36,7 @@ export default class CategoryController {
     return await this.service.getById(id);
   }
   @Put('/:id')
+  @UseGuards(AdminGuard)
   @ApiOperation({
     summary: 'toogle de categoria',
   })
@@ -42,6 +45,7 @@ export default class CategoryController {
   }
 
   @Patch('/:id')
+  @UseGuards(AdminGuard)
   @ApiOperation({
     summary: 'Actualização de categoria',
   })
@@ -53,6 +57,7 @@ export default class CategoryController {
   }
 
   @Post()
+  @UseGuards(AdminGuard)
   @ApiOperation({
     summary: 'Criação de categoria',
   })

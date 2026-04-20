@@ -9,6 +9,7 @@ import {
   Put,
   ParseIntPipe,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import CreateProductUseCase from '../../application/use-cases/createUseCase';
@@ -22,6 +23,7 @@ import { PaginationPipe } from 'src/core/pipes/pagination.pipe';
 import { CreateProductDto } from '../../application/dto/create';
 import { UpdateProductUseCase } from '../../application/use-cases/UpdateProductUseCase';
 import { CurrentUserId } from 'src/modules/Auth/presentation/http/decorator';
+import { AdminGuard } from 'src/modules/User/presentation/http/guards/AdminGuard';
 
 @Controller('products')
 @ApiTags('Products')
@@ -68,12 +70,14 @@ export class ProductController {
   }
 
   @Post()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Criar novo produto' })
   async create(@Body() body: CreateProductDto) {
     return this.createProductUC.handle(body);
   }
 
   @Put(':id')
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Actualizar um produto' })
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -83,6 +87,7 @@ export class ProductController {
   }
 
   @Patch(':id/increase-stock')
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Aumentar estoque do produto' })
   async increaseStock(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -92,6 +97,7 @@ export class ProductController {
   }
 
   @Patch(':id/toggle')
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Ativar ou desativar produto' })
   async toggle(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.toggleProductUC.handle(id);
