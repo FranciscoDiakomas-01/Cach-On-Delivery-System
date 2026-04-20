@@ -28,7 +28,7 @@ import UpdateCredentialDto from '../../application/dto/updateCredential';
 import { AdminGuard } from './guards/AdminGuard';
 import { CurrentUserId } from 'src/modules/Auth/presentation/http/decorator';
 
-@Controller('auth')
+@Controller('user')
 export class UserController {
   constructor(
     private readonly CreateUC: CreateDeliveryManUseCase,
