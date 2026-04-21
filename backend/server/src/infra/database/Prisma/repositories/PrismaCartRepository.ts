@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import Cart from 'src/modules/Cart/domains/entities/Cart';
 import CartRepository from 'src/modules/Cart/domains/repositories/abstraction';
+import { PrismaService } from '../prisma';
 
 @Injectable()
 export class PrismaCartRepository implements CartRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaService) {}
   async createCart(userId: string): Promise<Cart> {
     return (await this.prisma.cart.create({
       data: {
@@ -22,6 +22,7 @@ export class PrismaCartRepository implements CartRepository {
       where: { userId, isActive: true },
       include: {
         items: true,
+        order: true,
       },
     })) as unknown as Cart | null;
   }
@@ -75,21 +76,53 @@ export class PrismaCartRepository implements CartRepository {
       where: { cartId },
     });
   }
-  async markCartAsInactive(userId: string): Promise<void> {
+  async markCartAsInactive(id: string): Promise<void> {
     await this.prisma.cart.updateMany({
-      where: { userId, isActive: true },
+      where: {
+        OR: [
+          {
+            userId: id,
+          },
+          {
+            id,
+          },
+        ],
+      },
       data: { isActive: false },
     });
   }
 
   async reserveStock(productId: string, qty: number): Promise<void> {
     await this.prisma.product.update({
-      where: { id: productId },
+      where: {
+        id: productId,
+        available: {
+          gte: qty,
+        },
+      },
       data: {
+        reserved: {
+          increment: qty,
+        },
         available: {
           decrement: qty,
         },
+      },
+    });
+  }
+  async decreaseStock(productId: string, qty: number): Promise<void> {
+    await this.prisma.product.update({
+      where: {
+        id: productId,
+        available: {
+          gte: qty,
+        },
+      },
+      data: {
         reserved: {
+          decrement: qty,
+        },
+        available: {
           increment: qty,
         },
       },
@@ -98,24 +131,15 @@ export class PrismaCartRepository implements CartRepository {
 
   async releaseStock(productId: string, qty: number): Promise<void> {
     await this.prisma.product.update({
-      where: { id: productId },
-      data: {
-        stock: {
-          increment: qty,
-        },
-        reserved: {
-          decrement: qty,
-        },
+      where: {
+        id: productId,
       },
-    });
-  }
-
-  async decreaseStock(productId: string, qty: number): Promise<void> {
-    await this.prisma.product.update({
-      where: { id: productId },
       data: {
         reserved: {
           decrement: qty,
+        },
+        available: {
+          increment: qty,
         },
       },
     });

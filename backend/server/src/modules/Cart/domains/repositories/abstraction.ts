@@ -15,7 +15,6 @@ export default abstract class CartRepository {
     productId: string,
     quantity: number,
   ): Promise<void>;
-  abstract clearCart(cartId: string): Promise<void>;
   abstract markCartAsInactive(cartId: string): Promise<void>;
   abstract decreaseStock(productId: string, qty: number): Promise<void>;
   abstract reserveStock(productId: string, qty: number): Promise<void>;

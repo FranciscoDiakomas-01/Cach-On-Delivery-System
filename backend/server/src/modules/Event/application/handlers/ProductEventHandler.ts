@@ -32,10 +32,10 @@ export class ProductEventHandler {
     });
   }
 
-  @OnEvent('product.checkout')
+  @OnEvent('product.purchase')
   async handleCheckout(payload: IPayloadEventProduct) {
     await this.repo.register({
-      event: EventType.CHECKOUT,
+      event: EventType.PURCHASE,
       productId: payload.productid,
       userId: payload.userid,
     });
@@ -44,7 +44,7 @@ export class ProductEventHandler {
   @OnEvent('cart.item.added')
   async handlePurchase(payload: IPayloadEventProduct) {
     await this.repo.register({
-      event: EventType.PURCHASE,
+      event: EventType.CHECKOUT,
       productId: payload.productid,
       userId: payload.userid,
     });

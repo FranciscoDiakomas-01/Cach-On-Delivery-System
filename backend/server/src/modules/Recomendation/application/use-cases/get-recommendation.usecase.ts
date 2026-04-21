@@ -26,7 +26,6 @@ export class GetRecomendationUseCase {
         limit: 50,
         page: page,
       });
-
       return {
         limit: data.limit,
         total: data.total,
@@ -93,7 +92,6 @@ export class GetRecomendationUseCase {
       hasNexPage: unInteracted.hasNexPage,
       hasPrevPage: unInteracted.hasPrevPage,
       page: unInteracted.page,
-      prevCursor: null,
       items: feed,
     };
   }

@@ -23,6 +23,8 @@ import WishListModule from './modules/Wishlist/presentation/htpp/module';
 import { RecommendationModule } from './modules/Recomendation/presentation/controllers/module';
 import CoupunModule from './modules/Coupon/presentation/http/module';
 import { UserModule } from './modules/User/presentation/http/module';
+import CartModule from './modules/Cart/presentation/http/module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { UserModule } from './modules/User/presentation/http/module';
     RecommendationModule,
     CoupunModule,
     UserModule,
+    CartModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
@@ -65,6 +68,7 @@ import { UserModule } from './modules/User/presentation/http/module';
       verboseMemoryLeak: false,
       ignoreErrors: false,
     }),
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule implements NestModule {

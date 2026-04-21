@@ -32,11 +32,6 @@ export default class CreateCoupunDto {
   @IsPositive()
   minPurchase!: number;
   @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsPositive()
-  maxDiscount!: number;
-  @IsNumber()
   @IsOptional()
   @ApiProperty()
   @IsPositive()

@@ -1,5 +1,6 @@
 import { IUser } from 'src/modules/User/domains/entities/User';
 import CartItem from './CartItem';
+import Order from 'src/modules/Order/domain/entities/Order';
 
 export default interface Cart {
   id: string;
@@ -7,7 +8,7 @@ export default interface Cart {
   createdAt: Date;
   updatedAt: Date;
   user: IUser;
-  order: any;
+  order: Order;
   items: CartItem[];
   isActive: boolean;
 }

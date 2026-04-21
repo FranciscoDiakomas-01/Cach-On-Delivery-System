@@ -40,7 +40,6 @@ export default class UpdateCoupunUseCase implements IUseCase<
       updatedAt: new Date(),
       id: data.id,
       isActive: coupun.isActive,
-      maxDiscount: data.maxDiscount,
       maxUses: coupun.maxUses,
       minPurchase: data.minPurchase,
       type: data.type,

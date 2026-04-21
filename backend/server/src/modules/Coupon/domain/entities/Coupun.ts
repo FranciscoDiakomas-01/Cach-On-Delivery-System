@@ -6,7 +6,6 @@ export default interface Coupon {
   type: DiscountType;
   value: number;
   minPurchase: number;
-  maxDiscount: number;
   maxUses: number;
   usedCount: number;
   isActive: boolean;

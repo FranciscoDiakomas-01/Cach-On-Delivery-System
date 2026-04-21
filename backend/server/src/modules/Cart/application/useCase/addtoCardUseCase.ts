@@ -63,7 +63,9 @@ export default class AddToCartUseCase {
         message: 'Produto indisponível para compra',
       });
     }
-    if (product.available < quantity) {
+    const available = product.available - product.reserved;
+
+    if (available < quantity) {
       throw new ProductOutOfStockException(productId);
     }
     if (!cart) {
@@ -73,6 +75,7 @@ export default class AddToCartUseCase {
     const existingItem = cart.items.find(
       (item) => item.productId === productId,
     );
+
     if (existingItem) {
       const newQuantity = existingItem.quantity + quantity;
       if (newQuantity > product.available) {

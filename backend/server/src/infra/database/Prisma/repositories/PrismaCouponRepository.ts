@@ -16,7 +16,6 @@ export default class PrismaCouponRepository extends CouponRepository {
         value: coupon.value,
         isActive: true,
         maxUses: coupon.maxUses,
-        maxDiscount: coupon.maxDiscount,
         minPurchase: coupon.minPurchase,
         usedCount: 0,
       },
@@ -30,7 +29,6 @@ export default class PrismaCouponRepository extends CouponRepository {
         type: coupon.type,
         value: coupon.value,
         maxUses: coupon.maxUses,
-        maxDiscount: coupon.maxDiscount,
         minPurchase: coupon.minPurchase,
       },
       where: {

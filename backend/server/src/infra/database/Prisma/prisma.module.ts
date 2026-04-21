@@ -7,6 +7,7 @@ import {
   CATEGORY_REPOSITORY,
   COUPON_REPOSITORY,
   EVENT_REPOSITORY,
+  ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
   RECOMMENDATION_REPOSITORY,
   USER_REPOSITORY,
@@ -22,6 +23,7 @@ import { PrismaRecommendationRepository } from './repositories/PrismaRecommendat
 import PrismaCouponRepository from './repositories/PrismaCouponRepository';
 import PrismaUserRepository from './repositories/PrismaUserRepository';
 import { PrismaCartRepository } from './repositories/PrismaCartRepository';
+import { PrismaOrderRepository } from './repositories/PrismaOrderRepository';
 @Global()
 @Module({
   providers: [
@@ -65,13 +67,19 @@ import { PrismaCartRepository } from './repositories/PrismaCartRepository';
       provide: CART_REPOSITORY,
       useClass: PrismaCartRepository,
     },
+    {
+      provide: ORDER_REPOSITORY,
+      useClass: PrismaOrderRepository,
+    },
+
     PrismaService,
   ],
   exports: [
+    PrismaService,
+    ORDER_REPOSITORY,
     CART_REPOSITORY,
     CATEGORY_REPOSITORY,
     COUPON_REPOSITORY,
-    PrismaService,
     AUTH_REPOSITORY,
     PRODUCT_REPOSITORY,
     BRAND_REPOSITORY,

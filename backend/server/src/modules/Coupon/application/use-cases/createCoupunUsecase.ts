@@ -33,7 +33,6 @@ export default class CreateCoupunUseCase implements IUseCase<
       updatedAt: new Date(),
       id: crypto.randomUUID(),
       isActive: true,
-      maxDiscount: data.maxDiscount,
       maxUses: data.maxUses,
       minPurchase: data.minPurchase,
       type: data.type,

@@ -42,7 +42,6 @@ enum OrderStatus {
   PENDING
   CONFIRMED
   PROCESSING
-  SHIPPED
   DELIVERED
   CANCELLED
   REFUNDED
@@ -51,27 +50,19 @@ enum OrderStatus {
 enum DeliveryStatus {
   PENDING
   ASSIGNED
-  PICKED_UP
-  IN_TRANSIT
+  RECIEVED
   DELIVERED
   FAILED
   RETURNED
-  CLIENT_RECEIVED
-  DELIVERY_CONFIRMED
 }
 
 enum Paymethod {
-  CARD
-  LINK
-  APP
-  DEBIT
+  CASH
+  EXPRESS
+  REFERENCE
+  TRANSFER
 }
 
-enum PaymentStatus {
-  PENDING
-  PAID
-  FAILED
-}
 
 enum AssignmentStatus {
   ASSIGNED
@@ -197,11 +188,8 @@ model Order {
   coupunId String?
   subtotal  Decimal
   discount  Decimal @default(0)
-  tax       Decimal @default(0)
-  shipping  Decimal @default(0)
   total     Decimal
   paymentMethod Paymethod
-  paymentStatus PaymentStatus @default(PENDING)
   paidAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -270,7 +258,6 @@ model Coupon {
   type DiscountType
   value Decimal
   minPurchase Decimal? @db.Decimal(10,2)
-  maxDiscount Decimal? @db.Decimal(10,2)
   maxUses Int?
   usedCount Int @default(0)
   isActive Boolean @default(true)
