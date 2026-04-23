@@ -3,6 +3,7 @@ import Cart from '../entities/Cart';
 export default abstract class CartRepository {
   abstract createCart(userId: string): Promise<Cart>;
   abstract getCartByUserId(userId: string): Promise<Cart | null>;
+  abstract getById(id: string): Promise<Cart | null>;
   abstract deleteCart(cartId: string): Promise<void>;
   abstract addItemToCart(
     cartId: string,

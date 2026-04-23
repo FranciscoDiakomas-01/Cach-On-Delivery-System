@@ -1,6 +1,7 @@
 import {
   BadGatewayException,
   BadRequestException,
+  ConflictException,
   Inject,
   Injectable,
   NotFoundException,
@@ -66,6 +67,12 @@ export default class CreateOrderUseCase implements IUseCase<
       throw new NotFoundException({
         message: 'Carrinho não encontrado activo',
       });
+
+    if (cart?.order) {
+      throw new ConflictException({
+        message: 'O seu carrinho ja foi anexado a um pedido',
+      });
+    }
     let total = 0;
 
     if (deliveryMans.length === 0) {
@@ -119,6 +126,7 @@ export default class CreateOrderUseCase implements IUseCase<
         message: 'Não foi possível selecionar um entregador',
       });
     }
+
     const order = await this.orderRepository.create({
       id: crypto.randomUUID(),
       customerId: user.id,

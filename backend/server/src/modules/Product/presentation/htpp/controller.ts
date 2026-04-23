@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   Controller,
   Get,
@@ -41,8 +39,15 @@ export class ProductController {
 
   @Get()
   @ApiOperation({ summary: 'Listar produtos com paginação' })
-  async getAll(@Query() query: PaginationDto) {
-    return this.getProductsUC.handle(query as any);
+  async getAll(
+    @Query() query: PaginationDto,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return this.getProductsUC.handle({
+      limit,
+      page,
+    });
   }
 
   @Get(':unique')
@@ -66,7 +71,7 @@ export class ProductController {
   ) {
     return this.findByCategoryUC.handle({
       categoryId: id,
-      pagination: query as any,
+      pagination: query,
     });
   }
 

@@ -63,12 +63,10 @@ export default class AddToCartUseCase {
         message: 'Produto indisponível para compra',
       });
     }
-    const available = product.available - product.reserved;
-
-    if (available < quantity) {
+    if (product.available < quantity) {
       throw new ProductOutOfStockException(product.title);
     }
-    if (!cart) {
+    if (!cart || !cart.isActive) {
       await this.cartRepository.markCartAsInactive(userId);
       cart = await this.cartRepository.createCart(userId);
     }

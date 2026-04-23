@@ -40,6 +40,11 @@ export class PrismaCartRepository implements CartRepository {
         },
         order: true,
       },
+      orderBy: [
+        {
+          createdAt: 'desc',
+        },
+      ],
     });
     return data as Cart | null;
   }
@@ -147,5 +152,17 @@ export class PrismaCartRepository implements CartRepository {
         },
       },
     });
+  }
+
+  async getById(id: string): Promise<Cart | null> {
+    const data = await this.prisma.cart.findFirst({
+      where: { id },
+      include: {
+        order: true,
+        items: true,
+      },
+    });
+
+    return data as Cart | null;
   }
 }

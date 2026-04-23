@@ -19,6 +19,12 @@ export default class GetCartUseCase {
         message: 'Carrinho não encontrado para o usuário',
       });
     }
+    console.log(cart);
+    if (!cart.isActive) {
+      throw new BadRequestException({
+        message: 'Não possuis um carrinho ativo',
+      });
+    }
     return {
       data: cart,
     };
