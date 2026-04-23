@@ -1,5 +1,8 @@
 import AuthProvider from 'src/modules/Auth/domains/entities/AuthProvider';
 import UserRole from './UserRole';
+import Cart from 'src/modules/Cart/domains/entities/Cart';
+import Order from 'src/modules/Order/domain/entities/Order';
+import Event from 'src/modules/Event/domains/entities/Event';
 
 export interface IUser {
   id: string;
@@ -12,7 +15,9 @@ export interface IUser {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
-  curentLat: number;
-  currentLog: number;
-  maxLoad: number;
+  cart: Cart[] | undefined;
+  notifications: undefined;
+  events: Event[] | undefined;
+  customerOrders: Order[] | undefined;
+  deliveryOrders: Order[] | undefined;
 }

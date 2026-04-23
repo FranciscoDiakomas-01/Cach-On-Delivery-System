@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import AuthRepository from 'src/modules/Auth/domains/repositories/abstraction';
 import { PrismaService } from '../prisma';
@@ -8,14 +11,14 @@ export default class PrismaAuthRepository implements AuthRepository {
   constructor(private readonly prisma: PrismaService) {}
   async getByEmail(email: string): Promise<IUser | null> {
     const user = await this.prisma.user.findUnique({
-      where: { email },
+      where: { email, isActive: true },
     });
     if (!user) return null;
     return user as IUser;
   }
   async getById(id: string): Promise<IUser | null> {
     const user = await this.prisma.user.findUnique({
-      where: { id },
+      where: { id, isActive: true },
     });
 
     if (!user) return null;
@@ -34,16 +37,13 @@ export default class PrismaAuthRepository implements AuthRepository {
         role: user.role,
         authProvider: user.authProvider,
         isActive: user.isActive,
-        curentLat: user.curentLat,
-        currentLog: user.currentLog,
-        maxLoad: user.maxLoad,
       },
     });
     return created as IUser;
   }
   async updatePassword(userId: string, password: string): Promise<void> {
     await this.prisma.user.update({
-      where: { id: userId },
+      where: { id: userId, isActive: true },
       data: {
         password,
       },

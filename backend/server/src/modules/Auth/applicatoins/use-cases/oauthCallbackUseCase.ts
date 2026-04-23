@@ -40,16 +40,19 @@ export default class OauthCallbackUseCase implements IUseCase<
       const created = await this.repo.register({
         authProvider: oauthProvider,
         createdAt: new Date(),
-        curentLat: 0,
-        currentLog: 0,
         email,
         isActive: true,
         id: crypto.randomUUID(),
         firstName: name?.split(' ')[0] ?? '',
         lastName: name?.split(' ')[1] ?? '',
         role: UserRole.CUSTOMER,
-        maxLoad: 10,
         updatedAt: new Date(),
+        cart: [],
+        customerOrders: [],
+        deliveryOrders: [],
+        events: [],
+        notifications: undefined,
+        password: '',
       });
       const token = this.JwtService.sign({
         sub: created.id,

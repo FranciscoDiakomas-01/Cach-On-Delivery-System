@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import { IPagination, IPagintionProps } from 'src/core/types';
 import OrderRepository from 'src/modules/Order/domain/repositories/abstractration';
@@ -36,12 +40,32 @@ export class PrismaOrderRepository implements OrderRepository {
   ): Promise<IPagination<Order>> {
     const [data, total] = await Promise.all([
       this.prisma.order.findMany({
-        where: { costumerId: userId },
+        where: {
+          OR: [
+            {
+              deliveryManId: userId,
+            },
+            {
+              customerId: userId,
+            },
+          ],
+        },
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.order.count({ where: { costumerId: userId } }),
+      this.prisma.order.count({
+        where: {
+          OR: [
+            {
+              deliveryManId: userId,
+            },
+            {
+              customerId: userId,
+            },
+          ],
+        },
+      }),
     ]);
 
     return {
@@ -53,9 +77,38 @@ export class PrismaOrderRepository implements OrderRepository {
       hasPrevPage: page > 1,
     };
   }
-
   async getById(id: string): Promise<Order | null> {
-    const data = await this.prisma.order.findUnique({ where: { id } });
+    const data = await this.prisma.order.findFirst({
+      where: { id },
+      include: {
+        address: true,
+        coupon: true,
+        deliveryman: {
+          omit: {
+            password: true,
+          },
+        },
+        customer: {
+          omit: {
+            password: true,
+          },
+        },
+        cart: {
+          include: {
+            items: {
+              include: {
+                product: {
+                  include: {
+                    brand: true,
+                    category: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
     return data as Order | null;
   }
 
@@ -84,10 +137,11 @@ export class PrismaOrderRepository implements OrderRepository {
           },
         },
         cartId: order.cartId,
-        coupunId: order.coupunId,
+        couponId: order.couponId,
         status: 'PENDING',
-        costumerId: order.costumerId,
+        customerId: order.costumerId,
         discount: order.discount,
+        deliveryManId: order.deliveryManId,
       },
     });
     return data as any as Order;
@@ -96,7 +150,7 @@ export class PrismaOrderRepository implements OrderRepository {
   async updateStatus(orderId: string, status: OrderStatus): Promise<Order> {
     const data = await this.prisma.order.update({
       where: { id: orderId },
-      data: { status },
+      data: { status: status as any },
     });
 
     return data as any as Order;

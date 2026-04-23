@@ -16,6 +16,8 @@ export const envSchema = z.object({
   GOOGLE_REDIRECT_URI: z.url(),
   JWT_SECRET: z.string().nonempty(),
   RESET_LINK: z.url().nonempty(),
+  DEFAULT_EMAIL: z.email().nonempty(),
+  DEFAULT_PASSWORD: z.string().nonempty(),
 });
 
 export type Env = z.infer<typeof envSchema>;

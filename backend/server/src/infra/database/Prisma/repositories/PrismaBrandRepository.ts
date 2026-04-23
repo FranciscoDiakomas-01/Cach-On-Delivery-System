@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import BrandRepository from 'src/modules/Brands/domains/repositories/abstraction';
 import Brand from 'src/modules/Brands/domains/entities/Brand';
@@ -7,41 +11,46 @@ import { PrismaService } from '../prisma';
 export default class PrismaBrandRepository implements BrandRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: Brand): Promise<Brand> {
-    return this.prisma.brand.create({ data });
+  async create(data: Brand): Promise<Brand> {
+    const created = await this.prisma.brand.create({ data });
+    return created as any as Brand;
   }
 
-  findById(id: string): Promise<Brand | null> {
-    return this.prisma.brand.findUnique({
+  async findById(id: string): Promise<Brand | null> {
+    return (await this.prisma.brand.findUnique({
       where: { id },
       include: {
         _count: true,
       },
-    });
+    })) as any as Brand | null;
   }
 
-  findBySlug(slug: string): Promise<Brand | null> {
-    return this.prisma.brand.findUnique({ where: { slug } });
+  async findBySlug(slug: string): Promise<Brand | null> {
+    return (await this.prisma.brand.findFirst({
+      where: { slug },
+    })) as any as Brand | null;
   }
 
-  findByTitle(title: string): Promise<Brand | null> {
-    return this.prisma.brand.findUnique({ where: { title } });
+  async findByTitle(title: string): Promise<Brand | null> {
+    return (await this.prisma.brand.findUnique({
+      where: { title },
+    })) as any as Brand | null;
   }
 
-  getAll(): Promise<Brand[]> {
-    return this.prisma.brand.findMany({
+  async getAll(): Promise<Brand[]> {
+    return (await this.prisma.brand.findMany({
       orderBy: { createdAt: 'desc' },
       where: {
         isActive: true,
       },
-    });
+    })) as any as Brand[];
   }
 
   async update(id: string, data: Partial<Brand>): Promise<Brand> {
-    return this.prisma.brand.update({
+    return (await this.prisma.brand.update({
       where: { id },
       data,
-    });
+    })) as any as Brand;
   }
 
   async delete(id: string): Promise<void> {

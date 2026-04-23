@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 import { Coupon } from '@prisma/client';
 import Cart from 'src/modules/Cart/domains/entities/Cart';
 import { IUser } from 'src/modules/User/domains/entities/User';
@@ -10,7 +11,7 @@ export default interface Order {
   costumerId: string;
   status: OrderStatus;
   cartId: string;
-  coupunId: string | undefined;
+  couponId: string | undefined;
   subtotal: number;
   discount: number;
   total: number;
@@ -22,5 +23,5 @@ export default interface Order {
   cart: Cart;
   coupon: Coupon | undefined;
   address: Adress;
-  delivery: any;
+  deliveryManId: string;
 }

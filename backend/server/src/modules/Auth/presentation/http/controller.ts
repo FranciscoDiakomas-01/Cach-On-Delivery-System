@@ -47,11 +47,15 @@ export default class AuthController {
   public async callback(
     @Param('provider') provider: string,
     @Query('code') code: string,
+    @Res() response: Response,
   ) {
-    return await this.service.callback({
-      code,
-      provider,
-    });
+    return await this.service.callback(
+      {
+        code,
+        provider,
+      },
+      response,
+    );
   }
   @Post('forgot')
   @ApiOperation({

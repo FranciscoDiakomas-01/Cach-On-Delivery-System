@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import { Injectable } from '@nestjs/common';
 import UserRepository from 'src/modules/User/domains/repositories/abstraction';
 import { PrismaService } from '../prisma';
@@ -42,7 +47,11 @@ export default class PrismaUserRepository implements UserRepository {
   async updateProfile(userId: string, data: Partial<IUser>): Promise<IUser> {
     return (await this.prisma.user.update({
       where: { id: userId },
-      data,
+      data: {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+      },
     })) as IUser;
   }
 
@@ -83,5 +92,24 @@ export default class PrismaUserRepository implements UserRepository {
         password,
       },
     })) as IUser;
+  }
+
+  public async getDeliveriesMan(): Promise<IUser[]> {
+    const users = await this.prisma.user.findMany({
+      where: {
+        role: 'DELIVERY',
+        isActive: true,
+      },
+      include: {
+        deliveryOrders: {
+          where: {
+            status: {
+              in: ['PROCESSING', 'PENDING'],
+            },
+          },
+        },
+      },
+    });
+    return users as any as IUser[];
   }
 }

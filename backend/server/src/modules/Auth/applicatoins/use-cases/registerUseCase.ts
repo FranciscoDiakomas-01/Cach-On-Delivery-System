@@ -31,17 +31,19 @@ export default class RegisterUseCase implements IUseCase<
     const created = await this.repo.register({
       authProvider: AuthProvider.APP,
       createdAt: new Date(),
-      curentLat: 0,
-      currentLog: 0,
       email,
       isActive: true,
       id: crypto.randomUUID(),
       firstName,
       lastName,
       role: UserRole.CUSTOMER,
-      maxLoad: 10,
       updatedAt: new Date(),
       password: hashPassword,
+      cart: [],
+      customerOrders: [],
+      deliveryOrders: [],
+      events: [],
+      notifications: undefined,
     });
     const token = this.JwtService.sign({
       sub: created.id,

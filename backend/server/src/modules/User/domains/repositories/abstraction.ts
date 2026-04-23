@@ -6,6 +6,7 @@ export default abstract class UserRepository {
   public abstract get(props: IPagintionProps): Promise<IPagination<IUser>>;
   public abstract getByUniqueId(uniqueId: string): Promise<IUser | null>;
   public abstract updateProfile(userId: string, data: any): Promise<IUser>;
+  abstract getDeliveriesMan(): Promise<IUser[]>;
   public abstract toogleActive(
     userId: string,
     isActive: boolean,

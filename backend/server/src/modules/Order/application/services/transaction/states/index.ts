@@ -5,35 +5,6 @@ import { BadRequestException } from '@nestjs/common';
 import OrderRepository from 'src/modules/Order/domain/repositories/abstractration';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-export class ConfirmOrderService extends UpdateOrderStatusService {
-  constructor(
-    private readonly provider: OrderRepository,
-    private readonly eventEmmiter: EventEmitter2,
-  ) {
-    super(provider);
-  }
-
-  getStatus(): OrderStatus {
-    return OrderStatus.CONFIRMED;
-  }
-
-  async process(order: Order): Promise<Order> {
-    if (order.status !== OrderStatus.PENDING) {
-      throw new BadRequestException({
-        message: 'Apenas pedidos pendentes podem ser confirmados',
-      });
-    }
-    const data = await this.provider.updateStatus(
-      order.id,
-      OrderStatus.CONFIRMED,
-    );
-    this.eventEmmiter.emit('order.confirmated', {
-      order,
-    });
-    return data as any as Order;
-  }
-}
-
 export class CancelOrderService extends UpdateOrderStatusService {
   constructor(
     private readonly provider: OrderRepository,
@@ -59,7 +30,7 @@ export class CancelOrderService extends UpdateOrderStatusService {
     this.eventEmmiter.emit('order.canceled', {
       order,
     });
-    return data as any as Order;
+    return data;
   }
 }
 
@@ -71,6 +42,18 @@ export class PendingOrderService extends UpdateOrderStatusService {
   process(): Promise<Order> {
     throw new BadRequestException({
       message: 'Não é possível voltar para PENDING',
+    });
+  }
+}
+
+export class ExpiresOrderService extends UpdateOrderStatusService {
+  getStatus(): OrderStatus {
+    return OrderStatus.EXPIRED;
+  }
+
+  process(): Promise<Order> {
+    throw new BadRequestException({
+      message: 'Não é actualizar manualmne para expired',
     });
   }
 }
@@ -88,7 +71,7 @@ export class ProcessingOrderService extends UpdateOrderStatusService {
   }
 
   async process(order: Order): Promise<Order> {
-    if (order.status !== OrderStatus.CONFIRMED) {
+    if (order.status !== OrderStatus.PENDING) {
       throw new BadRequestException({
         message: 'Apenas pedidos confirmados podem ir para processamento',
       });
@@ -100,7 +83,7 @@ export class ProcessingOrderService extends UpdateOrderStatusService {
     );
 
     this.eventEmmiter.emit('order.processing', { order });
-    return data as any as Order;
+    return data;
   }
 }
 
@@ -129,7 +112,7 @@ export class DeliverOrderService extends UpdateOrderStatusService {
     );
 
     this.eventEmmiter.emit('order.delivered', { order });
-    return data as any as Order;
+    return data;
   }
 }
 
@@ -158,6 +141,6 @@ export class RefundOrderService extends UpdateOrderStatusService {
     );
 
     this.eventEmmiter.emit('order.refunded', { order });
-    return data as any as Order;
+    return data;
   }
 }

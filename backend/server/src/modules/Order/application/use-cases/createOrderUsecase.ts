@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
@@ -30,6 +31,8 @@ import {
 import DiscountFactory from 'src/modules/Coupon/application/factory/Discount/factory';
 import Adress from '../../domain/entities/Adress';
 import { OrderStatus } from '../../domain/entities/OrderStatus';
+import UserRole from 'src/modules/User/domains/entities/UserRole';
+import { IUser } from 'src/modules/User/domains/entities/User';
 
 @Injectable()
 export default class CreateOrderUseCase implements IUseCase<
@@ -50,38 +53,39 @@ export default class CreateOrderUseCase implements IUseCase<
   public async handle(
     data: CreateOrderDTO & { userId: string },
   ): Promise<Order> {
-    const [user, cart] = await Promise.all([
+    const [user, cart, deliveryMans] = await Promise.all([
       this.userRepository.getByUniqueId(data.userId),
       this.cartRepository.getCartByUserId(data.userId),
+      this.userRepository.getDeliveriesMan(),
     ]);
 
     if (!user) throw new UserNotFoundException();
-    if (!user.isActive) throw new UserInactiveException();
+    if (!user.isActive || user.role !== UserRole.CUSTOMER)
+      throw new UserInactiveException();
     if (!cart)
       throw new NotFoundException({ message: 'Carrinho não encontrado' });
-
     let total = 0;
 
+    if (deliveryMans.length === 0) {
+      throw new BadRequestException({
+        message: 'Não existe entregadores no sistema registrados',
+      });
+    }
     for (const item of cart.items) {
       total += item.quantity * item.product.price;
     }
-
     let subtotal = total;
     let discounted = 0;
     let coupon: Coupon | null = null;
-
     if (data.couponId) {
       coupon = await this.couponRepo.findByUnique(data.couponId);
       if (!coupon) throw new NotFoundCoupunError();
-
       if (!coupon.isActive) throw new InactiveCounpunError();
-
       if (coupon.usedCount >= coupon.maxUses) {
         throw new BadGatewayException({
           message: 'Coupon atingiu o limite',
         });
       }
-
       if (total < coupon.minPurchase && coupon.minPurchase !== 0) {
         throw new BadGatewayException({
           message: `Mínimo: ${coupon.minPurchase}`,
@@ -92,6 +96,20 @@ export default class CreateOrderUseCase implements IUseCase<
       discounted = total - subtotal;
     }
     const address = data.address as any as Adress;
+    const selectedDeliveyMan = deliveryMans.reduce(
+      (best, man) => {
+        const manCount = man.deliveryOrders?.length ?? 0;
+        const bestCount = best?.deliveryOrders?.length ?? Infinity;
+        return manCount < bestCount ? man : best;
+      },
+      null as IUser | null,
+    );
+
+    if (!selectedDeliveyMan) {
+      throw new BadRequestException({
+        message: 'Não foi possível selecionar um entregador',
+      });
+    }
     const order = await this.orderRepository.create({
       id: crypto.randomUUID(),
       costumerId: user.id,
@@ -102,16 +120,15 @@ export default class CreateOrderUseCase implements IUseCase<
       subtotal,
       total,
       discount: discounted,
-      coupunId: coupon?.id,
+      couponId: coupon?.id,
       coupon: undefined,
       status: OrderStatus.PENDING,
       createdAt: new Date(),
       updatedAt: new Date(),
       user,
-      delivery: undefined,
       paidAt: undefined,
+      deliveryManId: selectedDeliveyMan.id,
     });
-
     if (coupon) {
       await this.couponRepo.incrementUsesCount(coupon.id);
     }

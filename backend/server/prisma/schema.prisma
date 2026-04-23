@@ -40,21 +40,14 @@ enum EventTypes {
 
 enum OrderStatus {
   PENDING
-  CONFIRMED
   PROCESSING
   DELIVERED
   CANCELLED
   REFUNDED
+  EXPIRED
 }
 
-enum DeliveryStatus {
-  PENDING
-  ASSIGNED
-  RECIEVED
-  DELIVERED
-  FAILED
-  RETURNED
-}
+
 
 enum Paymethod {
   CASH
@@ -64,13 +57,6 @@ enum Paymethod {
 }
 
 
-enum AssignmentStatus {
-  ASSIGNED
-  ACCEPTED
-  REJECTED
-  COMPLETED
-  CANCELLED
-}
 
 model User {
   id            String   @id @default(uuid())
@@ -83,17 +69,14 @@ model User {
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  curentLat       Float?
-  currentLog       Float?
-  maxLoad   Int @default(10)
-  cart          Cart?
-  orders        Order[]
+  cart          Cart[]
+  customerOrders Order[] @relation("CustomerOrders")
+  deliveryOrders Order[] @relation("DeliveryOrders")
   notifications Notification[]
   events        Event[]
   recoveries    Recovery[]
   wishlist      Wishlist[]
   reviews       Review[]
-  deliveryAssignment DeliveryAssignment[]
   @@map("users")
 }
 
@@ -181,24 +164,25 @@ model Brand {
 }
 
 model Order {
-  id        String @id @default(uuid())
-  costumerId    String
-  status    OrderStatus @default(PENDING)
-  cartId String @unique
-  coupunId String?
-  subtotal  Decimal
-  discount  Decimal @default(0)
-  total     Decimal
+  id            String @id @default(uuid())
+  customerId    String
+  deliveryManId  String?
+  status        OrderStatus @default(PENDING)
+  cartId        String @unique
+  couponId      String?
+  subtotal      Decimal
+  discount      Decimal @default(0)
+  total         Decimal
   paymentMethod Paymethod
-  paidAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user    User @relation(fields: [costumerId], references: [id])
-  cart Cart @relation(fields: [cartId] , references: [id])
-  coupon Coupon? @relation(fields: [coupunId] , references: [id])
-  address Adress?
-  delivery Delivery?
-  reviews Review[]
+  paidAt        DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  customer      User @relation("CustomerOrders", fields: [customerId], references: [id], onDelete: Cascade)
+  deliveryman   User? @relation("DeliveryOrders", fields: [deliveryManId], references: [id], onDelete: SetNull)
+  cart          Cart @relation(fields: [cartId], references: [id])
+  coupon        Coupon? @relation(fields: [couponId], references: [id])
+  address       Adress?
+  reviews       Review[]
   @@map("orders")
 }
 
@@ -222,34 +206,6 @@ model Adress {
   updatedAt     DateTime @updatedAt
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
   @@map("order_addresses")
-}
-
-model Delivery {
-  id        String @id @default(uuid())
-  orderId   String @unique
-  status    DeliveryStatus @default(PENDING)
-  expiresAt DateTime
-  confirmedAt DateTime?
-  deliveredAt DateTime?
-  createdAt DateTime @default(now())
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  assignment DeliveryAssignment[]
-  @@map("deliveries")
-}
-
-model DeliveryAssignment {
-  id String @id @default(uuid())
-  deliveryId String
-  userId String
-  status AssignmentStatus @default(ASSIGNED)
-  distance Float?
-  assignedAt DateTime @default(now())
-  completedAt DateTime?
-  delivery Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
-  user  User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@index([deliveryId])
-  @@index([userId])
-  @@map("delivery_assignments")
 }
 
 model Coupon {

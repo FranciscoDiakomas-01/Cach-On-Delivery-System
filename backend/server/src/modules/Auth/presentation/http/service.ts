@@ -11,6 +11,8 @@ import OauthCallbackUseCase from '../../applicatoins/use-cases/oauthCallbackUseC
 import { OAuthProviderDto } from '../../applicatoins/dto/oauth.dto';
 import RegisterUseCase from '../../applicatoins/use-cases/registerUseCase';
 import RegisterDto from '../../applicatoins/dto/register.dto';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export default class AuthService {
@@ -21,6 +23,7 @@ export default class AuthService {
     private readonly OAuthFactoryUseCase: OAuthFactoryUseCase,
     private readonly OauthCallbackUseCase: OauthCallbackUseCase,
     private readonly RegisterUseCase: RegisterUseCase,
+    private readonly Config: ConfigService,
   ) {}
 
   public async register(data: RegisterDto) {
@@ -41,11 +44,13 @@ export default class AuthService {
     return response;
   }
 
-  public async callback(data: OAuthProviderDto) {
-    const response = await this.OauthCallbackUseCase.handle(data);
-    return {
-      data: response,
-    };
+  public async callback(dto: OAuthProviderDto, response: Response) {
+    const data = await this.OauthCallbackUseCase.handle(dto);
+    const { token } = data;
+    const authLink =
+      this.Config.get<string>('FRONT_URL') +
+      `?token=${token}&provider=${dto.provider.toLocaleLowerCase()}`;
+    response.redirect(authLink);
   }
   public async forgot(data: ForgotDto) {
     await this.ForgotUseCase.handle({

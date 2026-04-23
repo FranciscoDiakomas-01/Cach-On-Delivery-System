@@ -2,8 +2,8 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import UpdateOrderStatusService from './interface';
 import {
   CancelOrderService,
-  ConfirmOrderService,
   DeliverOrderService,
+  ExpiresOrderService,
   PendingOrderService,
   ProcessingOrderService,
   RefundOrderService,
@@ -21,11 +21,11 @@ export default class OrderStatusProcessorFactory {
   ): UpdateOrderStatusService {
     const serviceMap: Record<OrderStatus, UpdateOrderStatusService> = {
       CANCELLED: new CancelOrderService(repo, eventEmitter),
-      CONFIRMED: new ConfirmOrderService(repo, eventEmitter),
       DELIVERED: new DeliverOrderService(repo, eventEmitter),
       PENDING: new PendingOrderService(repo),
       PROCESSING: new ProcessingOrderService(repo, eventEmitter),
       REFUNDED: new RefundOrderService(repo, eventEmitter),
+      EXPIRED: new ExpiresOrderService(repo),
     };
     return serviceMap[statusType];
   }

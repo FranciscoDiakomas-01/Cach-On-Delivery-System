@@ -31,10 +31,12 @@ export class CreateDeliveryManUseCase {
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-      curentLat: 0,
-      currentLog: 0,
-      maxLoad: 0,
       role: UserRole.DELIVERY,
+      cart: [],
+      customerOrders: [],
+      deliveryOrders: [],
+      events: [],
+      notifications: undefined,
     });
     const { raw, expiresAt } = await this.ForgotUseCase.handle({
       email: user.email,
