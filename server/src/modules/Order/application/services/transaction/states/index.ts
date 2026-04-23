@@ -36,6 +36,11 @@ export class CancelOrderService extends UpdateOrderStatusService {
           product.productId,
           product.quantity,
         );
+
+        this.eventEmmiter.emit('cart.item.removed', {
+          userid: order.customerId,
+          productid: product.productId,
+        });
       }
     }
     this.eventEmmiter.emit('order.canceled', {
@@ -129,6 +134,11 @@ export class DeliverOrderService extends UpdateOrderStatusService {
           product.productId,
           product.quantity,
         );
+
+        this.eventEmmiter.emit('product.purchase', {
+          userid: order.customerId,
+          productid: product.product,
+        });
       }
     }
     this.eventEmmiter.emit('order.delivered', { order });
@@ -166,6 +176,10 @@ export class RefundOrderService extends UpdateOrderStatusService {
           product.productId,
           product.quantity,
         );
+        this.eventEmmiter.emit('cart.item.removed', {
+          userid: order.customerId,
+          productid: product.productId,
+        });
       }
     }
     this.eventEmmiter.emit('order.canceled', {
