@@ -139,7 +139,7 @@ export class PrismaOrderRepository implements OrderRepository {
         cartId: order.cartId,
         couponId: order.couponId,
         status: 'PENDING',
-        customerId: order.costumerId,
+        customerId: order.customerId,
         discount: order.discount,
         deliveryManId: order.deliveryManId,
       },

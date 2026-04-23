@@ -66,7 +66,7 @@ export default class AddToCartUseCase {
     const available = product.available - product.reserved;
 
     if (available < quantity) {
-      throw new ProductOutOfStockException(productId);
+      throw new ProductOutOfStockException(product.title);
     }
     if (!cart) {
       await this.cartRepository.markCartAsInactive(userId);
@@ -75,7 +75,6 @@ export default class AddToCartUseCase {
     const existingItem = cart.items.find(
       (item) => item.productId === productId,
     );
-
     if (existingItem) {
       const newQuantity = existingItem.quantity + quantity;
       if (newQuantity > product.available) {
@@ -86,8 +85,10 @@ export default class AddToCartUseCase {
         productId,
         existingItem.quantity + quantity,
       );
+    } else {
+      await this.cartRepository.addItemToCart(cart.id, productId, quantity);
     }
-    await this.cartRepository.addItemToCart(cart.id, productId, quantity);
+    await this.cartRepository.reserveStock(productId, quantity);
     this.eventEmitter.emit('cart.item.added', {
       userid: userId,
       productid: productId,

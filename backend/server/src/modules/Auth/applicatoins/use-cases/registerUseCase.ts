@@ -44,6 +44,7 @@ export default class RegisterUseCase implements IUseCase<
       deliveryOrders: [],
       events: [],
       notifications: undefined,
+      reviews: [],
     });
     const token = this.JwtService.sign({
       sub: created.id,

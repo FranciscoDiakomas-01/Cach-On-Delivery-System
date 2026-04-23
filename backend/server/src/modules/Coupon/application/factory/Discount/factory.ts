@@ -9,11 +9,11 @@ export default class DiscountFactory {
     this.strategy.set(DiscountType.PERCENT, new PercentDiscount(this.value));
     this.strategy.set(DiscountType.FIXED, new FixedDiscount(this.value));
   }
-  public apply(type: DiscountType): number {
+  public apply(type: DiscountType, amount: number): number {
     const discount = this.strategy.get(type);
     if (!discount) {
       throw new Error(`No  discount strategy found for type: ${type}`);
     }
-    return discount.apply(this.value);
+    return discount.apply(amount);
   }
 }

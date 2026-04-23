@@ -22,11 +22,10 @@ import {
   GetUsersUseCase,
 } from '../../application/use-cases/getUsersUseCase';
 import { UpdateCredentialsUseCase } from '../../application/use-cases/updateCredentialsUsecase';
-import type { IPagintionProps } from 'src/core/types';
-import { PaginationPipe } from 'src/core/pipes/pagination.pipe';
 import UpdateCredentialDto from '../../application/dto/updateCredential';
 import { AdminGuard } from './guards/AdminGuard';
 import { CurrentUserId } from 'src/modules/Auth/presentation/http/decorator';
+import { PaginationDto } from 'src/core/dto/PaginationDto';
 
 @Controller('user')
 export class UserController {
@@ -88,23 +87,12 @@ export class UserController {
   async getAll(
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Query(new PaginationPipe()) q: IPagintionProps,
+    @Query() q: PaginationDto,
   ) {
     return await this.GetUC.execute({
       limit,
       page,
     });
-  }
-
-  @Get(':id')
-  @UseGuards(AdminGuard)
-  @ApiOperation({
-    summary: 'Obter usuário por ID',
-    description:
-      'Permite obter as informações de um usuário específico por ID.',
-  })
-  async getById(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.GetByUniquUc.execute(id);
   }
 
   @Get('/me')
@@ -114,6 +102,16 @@ export class UserController {
       'Permite obter as informações do perfil do usuário autenticado.',
   })
   async getMe(@CurrentUserId() id: string) {
+    return this.GetByUniquUc.execute(id);
+  }
+  @Get(':id')
+  @UseGuards(AdminGuard)
+  @ApiOperation({
+    summary: 'Obter usuário por ID',
+    description:
+      'Permite obter as informações de um usuário específico por ID.',
+  })
+  async getById(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.GetByUniquUc.execute(id);
   }
 

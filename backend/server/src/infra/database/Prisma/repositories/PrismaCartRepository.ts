@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import { Injectable } from '@nestjs/common';
 import Cart from 'src/modules/Cart/domains/entities/Cart';
 import CartRepository from 'src/modules/Cart/domains/repositories/abstraction';
@@ -7,7 +11,7 @@ import { PrismaService } from '../prisma';
 export class PrismaCartRepository implements CartRepository {
   constructor(private readonly prisma: PrismaService) {}
   async createCart(userId: string): Promise<Cart> {
-    return (await this.prisma.cart.create({
+    const data = await this.prisma.cart.create({
       data: {
         userId,
         isActive: true,
@@ -15,16 +19,29 @@ export class PrismaCartRepository implements CartRepository {
       include: {
         items: true,
       },
-    })) as unknown as Cart;
+    });
+    return data as Cart;
   }
   async getCartByUserId(userId: string): Promise<Cart | null> {
-    return (await this.prisma.cart.findFirst({
-      where: { userId, isActive: true },
+    const data = await this.prisma.cart.findFirst({
+      where: {
+        userId,
+      },
       include: {
-        items: true,
+        items: {
+          include: {
+            product: {
+              include: {
+                brand: true,
+                category: true,
+              },
+            },
+          },
+        },
         order: true,
       },
-    })) as unknown as Cart | null;
+    });
+    return data as Cart | null;
   }
   async deleteCart(cartId: string): Promise<void> {
     await this.prisma.cart.delete({
@@ -94,46 +111,33 @@ export class PrismaCartRepository implements CartRepository {
 
   async reserveStock(productId: string, qty: number): Promise<void> {
     await this.prisma.product.update({
-      where: {
-        id: productId,
-        available: {
-          gte: qty,
-        },
-      },
+      where: { id: productId },
       data: {
-        reserved: {
-          increment: qty,
-        },
         available: {
           decrement: qty,
+        },
+        reserved: {
+          increment: qty,
         },
       },
     });
   }
   async decreaseStock(productId: string, qty: number): Promise<void> {
     await this.prisma.product.update({
-      where: {
-        id: productId,
-        available: {
-          gte: qty,
-        },
-      },
+      where: { id: productId },
       data: {
         reserved: {
           decrement: qty,
         },
-        available: {
-          increment: qty,
-        },
+        // available NÃO volta
+        // porque já saiu do sistema
       },
     });
   }
 
   async releaseStock(productId: string, qty: number): Promise<void> {
     await this.prisma.product.update({
-      where: {
-        id: productId,
-      },
+      where: { id: productId },
       data: {
         reserved: {
           decrement: qty,

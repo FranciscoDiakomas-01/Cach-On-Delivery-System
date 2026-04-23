@@ -53,6 +53,7 @@ export default class OauthCallbackUseCase implements IUseCase<
         events: [],
         notifications: undefined,
         password: '',
+        reviews: [],
       });
       const token = this.JwtService.sign({
         sub: created.id,

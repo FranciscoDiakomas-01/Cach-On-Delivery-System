@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
@@ -15,7 +16,7 @@ export class PrismaService
     const adapter = new PrismaPg({ connectionString });
     super({
       adapter,
-      log: ['error', 'warn', 'info', 'query'],
+      log: ['error', 'warn', 'info'],
     });
   }
 

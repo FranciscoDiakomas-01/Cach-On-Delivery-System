@@ -14,9 +14,8 @@ import UpdateOrderUseCase from '../../application/use-cases/updateOrderStatusUse
 import CreateOrderDTO from '../../application/dto/createOrderDto';
 import { CurrentUserId } from 'src/modules/Auth/presentation/http/decorator';
 import { ApiOperation } from '@nestjs/swagger';
-import type { IPagintionProps } from 'src/core/types';
-import { PaginationPipe } from 'src/core/pipes/pagination.pipe';
 import UpdateOrderDto from '../../application/dto/UpdateOrderDto';
+import { PaginationDto } from 'src/core/dto/PaginationDto';
 
 @Controller('order')
 export default class OrderController {
@@ -49,7 +48,7 @@ export default class OrderController {
     summary: 'Listagem de pedidos',
   })
   public async getOrders(
-    @Query(new PaginationPipe()) q: IPagintionProps,
+    @Query() q: PaginationDto,
     @Query('page') page: number,
     @Query('limit') limit: number,
     @CurrentUserId() userId: string,
@@ -77,7 +76,7 @@ export default class OrderController {
     return data;
   }
 
-  @Put(':id')
+  @Put()
   @ApiOperation({
     summary: 'Actualizar status de pedido',
   })

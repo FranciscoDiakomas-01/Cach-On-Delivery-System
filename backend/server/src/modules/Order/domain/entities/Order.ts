@@ -8,7 +8,7 @@ import Adress from './Adress';
 
 export default interface Order {
   id: string;
-  costumerId: string;
+  customerId: string;
   status: OrderStatus;
   cartId: string;
   couponId: string | undefined;

@@ -41,7 +41,7 @@ export class CreateReviewUseCase {
       throw new BadRequestException('Order não encontrada');
     }
 
-    if (order.costumerId !== data.userId) {
+    if (order.customerId !== data.userId) {
       throw new BadRequestException(
         'Não podes avaliar uma order que não é tua',
       );
@@ -100,7 +100,7 @@ export class GetReviewsByOrderUseCase {
     }
 
     if (
-      (user.role === UserRole.CUSTOMER && order.costumerId !== userId) ||
+      (user.role === UserRole.CUSTOMER && order.customerId !== userId) ||
       (user.role === UserRole.DELIVERY && order.deliveryManId !== userId)
     ) {
       throw new ForbiddenException({

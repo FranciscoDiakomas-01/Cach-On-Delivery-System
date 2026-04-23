@@ -63,7 +63,9 @@ export default class CreateOrderUseCase implements IUseCase<
     if (!user.isActive || user.role !== UserRole.CUSTOMER)
       throw new UserInactiveException();
     if (!cart)
-      throw new NotFoundException({ message: 'Carrinho não encontrado' });
+      throw new NotFoundException({
+        message: 'Carrinho não encontrado activo',
+      });
     let total = 0;
 
     if (deliveryMans.length === 0) {
@@ -81,7 +83,7 @@ export default class CreateOrderUseCase implements IUseCase<
       coupon = await this.couponRepo.findByUnique(data.couponId);
       if (!coupon) throw new NotFoundCoupunError();
       if (!coupon.isActive) throw new InactiveCounpunError();
-      if (coupon.usedCount >= coupon.maxUses) {
+      if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
         throw new BadGatewayException({
           message: 'Coupon atingiu o limite',
         });
@@ -91,8 +93,15 @@ export default class CreateOrderUseCase implements IUseCase<
           message: `Mínimo: ${coupon.minPurchase}`,
         });
       }
+      const discountApplied = new DiscountFactory(Number(coupon.value)).apply(
+        coupon.type,
+        total,
+      );
 
-      subtotal = new DiscountFactory(total).apply(coupon.type);
+      if (isNaN(discountApplied) || discountApplied < 0) {
+        throw new Error('Invalid discount applied');
+      }
+      subtotal = discountApplied;
       discounted = total - subtotal;
     }
     const address = data.address as any as Adress;
@@ -112,7 +121,7 @@ export default class CreateOrderUseCase implements IUseCase<
     }
     const order = await this.orderRepository.create({
       id: crypto.randomUUID(),
-      costumerId: user.id,
+      customerId: user.id,
       cartId: cart.id,
       cart,
       address: address,
@@ -129,6 +138,7 @@ export default class CreateOrderUseCase implements IUseCase<
       paidAt: undefined,
       deliveryManId: selectedDeliveyMan.id,
     });
+    await this.cartRepository.markCartAsInactive(cart.id);
     if (coupon) {
       await this.couponRepo.incrementUsesCount(coupon.id);
     }

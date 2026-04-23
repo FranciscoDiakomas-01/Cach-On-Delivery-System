@@ -4,11 +4,13 @@ import Order from 'src/modules/Order/domain/entities/Order';
 import { BadRequestException } from '@nestjs/common';
 import OrderRepository from 'src/modules/Order/domain/repositories/abstractration';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import CartRepository from 'src/modules/Cart/domains/repositories/abstraction';
 
 export class CancelOrderService extends UpdateOrderStatusService {
   constructor(
     private readonly provider: OrderRepository,
     private readonly eventEmmiter: EventEmitter2,
+    private readonly cartRepoSitory: CartRepository,
   ) {
     super(provider);
   }
@@ -23,10 +25,19 @@ export class CancelOrderService extends UpdateOrderStatusService {
         message: 'Apenas pedidos pendentes podem ser cancelados',
       });
     }
-    const data = await this.provider.updateStatus(
-      order.id,
-      OrderStatus.CANCELLED,
-    );
+    const [data, cart] = await Promise.all([
+      this.provider.updateStatus(order.id, OrderStatus.CANCELLED),
+      this.cartRepoSitory.getCartByUserId(order.customerId),
+    ]);
+
+    if (cart) {
+      for (const product of cart.items) {
+        await this.cartRepoSitory.releaseStock(
+          product.productId,
+          product.quantity,
+        );
+      }
+    }
     this.eventEmmiter.emit('order.canceled', {
       order,
     });
@@ -91,6 +102,7 @@ export class DeliverOrderService extends UpdateOrderStatusService {
   constructor(
     private readonly provider: OrderRepository,
     private readonly eventEmmiter: EventEmitter2,
+    private readonly cartRepoSitory: CartRepository,
   ) {
     super(provider);
   }
@@ -106,11 +118,19 @@ export class DeliverOrderService extends UpdateOrderStatusService {
       });
     }
 
-    const data = await this.provider.updateStatus(
-      order.id,
-      OrderStatus.DELIVERED,
-    );
+    const [data, cart] = await Promise.all([
+      this.provider.updateStatus(order.id, OrderStatus.DELIVERED),
+      this.cartRepoSitory.getCartByUserId(order.customerId),
+    ]);
 
+    if (cart) {
+      for (const product of cart.items) {
+        await this.cartRepoSitory.releaseStock(
+          product.productId,
+          product.quantity,
+        );
+      }
+    }
     this.eventEmmiter.emit('order.delivered', { order });
     return data;
   }
@@ -120,27 +140,37 @@ export class RefundOrderService extends UpdateOrderStatusService {
   constructor(
     private readonly provider: OrderRepository,
     private readonly eventEmmiter: EventEmitter2,
+    private readonly cartRepoSitory: CartRepository,
   ) {
     super(provider);
   }
 
   getStatus(): OrderStatus {
-    return OrderStatus.REFUNDED;
+    return OrderStatus.CANCELLED;
   }
 
   async process(order: Order): Promise<Order> {
     if (order.status !== OrderStatus.DELIVERED) {
       throw new BadRequestException({
-        message: 'Só pedidos entregues podem ser reembolsados',
+        message: 'Apenas finalizados podem ser reembolsados',
       });
     }
+    const [data, cart] = await Promise.all([
+      this.provider.updateStatus(order.id, OrderStatus.REFUNDED),
+      this.cartRepoSitory.getCartByUserId(order.customerId),
+    ]);
 
-    const data = await this.provider.updateStatus(
-      order.id,
-      OrderStatus.REFUNDED,
-    );
-
-    this.eventEmmiter.emit('order.refunded', { order });
+    if (cart) {
+      for (const product of cart.items) {
+        await this.cartRepoSitory.releaseStock(
+          product.productId,
+          product.quantity,
+        );
+      }
+    }
+    this.eventEmmiter.emit('order.canceled', {
+      order,
+    });
     return data;
   }
 }

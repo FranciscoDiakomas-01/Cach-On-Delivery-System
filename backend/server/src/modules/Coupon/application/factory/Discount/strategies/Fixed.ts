@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { DiscountType } from '@prisma/client';
 import IDiscount from '../interface';
+import { BadRequestException } from '@nestjs/common';
 
 export default class FixedDiscount extends IDiscount {
   constructor(private readonly value: number) {
@@ -7,10 +9,11 @@ export default class FixedDiscount extends IDiscount {
   }
 
   apply(amount: number): number {
-    if (this.value < 0 || this.value > 100) {
-      throw new Error('Invalid fixed value');
+    const value = Number(amount);
+    if (value < 0 || value > 100) {
+      throw new BadRequestException('Invalid fixed value');
     }
-    return amount - this.value;
+    return amount - value;
   }
 
   getType(): DiscountType {

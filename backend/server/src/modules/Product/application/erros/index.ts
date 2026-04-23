@@ -24,7 +24,7 @@ export class ProductOutOfStockException extends HttpException {
   constructor(productName: string) {
     super(
       {
-        message: `Produto "${productName}" está sem estoque`,
+        message: `Produto ${productName} está sem estoque`,
         error: ProductErrorCode.OUT_OF_STOCK,
       },
       HttpStatus.BAD_REQUEST,

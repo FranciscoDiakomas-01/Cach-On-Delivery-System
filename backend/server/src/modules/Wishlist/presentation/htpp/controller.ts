@@ -11,8 +11,7 @@ import ToggleToWishListUseCase from '../../application/usecase/toggletoListUseCa
 import GetWishListUseCase from '../../application/usecase/getMyListUseCase';
 import { CurrentUserId } from 'src/modules/Auth/presentation/http/decorator';
 import { ApiOperation } from '@nestjs/swagger';
-import type { IPagintionProps } from 'src/core/types';
-import { PaginationPipe } from 'src/core/pipes/pagination.pipe';
+import { PaginationDto } from 'src/core/dto/PaginationDto';
 
 @Controller('wishlist')
 export default class WishlistController {
@@ -41,7 +40,7 @@ export default class WishlistController {
   })
   public async get(
     @CurrentUserId() userId: string,
-    @Query(new PaginationPipe()) query: IPagintionProps,
+    @Query() query: PaginationDto,
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {

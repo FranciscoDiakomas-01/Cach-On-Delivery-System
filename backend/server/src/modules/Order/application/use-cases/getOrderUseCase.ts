@@ -36,9 +36,9 @@ export default class GetOrdersUseCase {
       });
     }
     const isAdmin = user.role === UserRole.ADMIN;
-    const isOwner = order?.costumerId === userId;
-
-    if (!isAdmin && !isOwner) {
+    const isOwner = order.customerId === userId;
+    const isDelivery = order.deliveryManId === userId;
+    if (!isAdmin && !isOwner && !isDelivery) {
       throw new UnauthorizedException({
         message: 'Não possuis permição para consultar este conteúdo',
       });

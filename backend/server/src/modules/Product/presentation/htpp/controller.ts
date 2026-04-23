@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   Controller,
   Get,
@@ -18,12 +20,11 @@ import GetProductByUniqueUseCase from '../../application/use-cases/getByUnique';
 import GetProductUseCase from '../../application/use-cases/getProduct';
 import { IncreaseStockUseCase } from '../../application/use-cases/IncreaseStockUseCase';
 import ToogleProductUseCase from '../../application/use-cases/ToogleProductUseCase';
-import type { IPagintionProps } from 'src/core/types';
-import { PaginationPipe } from 'src/core/pipes/pagination.pipe';
 import { CreateProductDto } from '../../application/dto/create';
 import { UpdateProductUseCase } from '../../application/use-cases/UpdateProductUseCase';
 import { CurrentUserId } from 'src/modules/Auth/presentation/http/decorator';
 import { AdminGuard } from 'src/modules/User/presentation/http/guards/AdminGuard';
+import { PaginationDto } from 'src/core/dto/PaginationDto';
 
 @Controller('products')
 @ApiTags('Products')
@@ -40,8 +41,8 @@ export class ProductController {
 
   @Get()
   @ApiOperation({ summary: 'Listar produtos com paginação' })
-  async getAll(@Query(new PaginationPipe()) query: IPagintionProps) {
-    return this.getProductsUC.handle(query);
+  async getAll(@Query() query: PaginationDto) {
+    return this.getProductsUC.handle(query as any);
   }
 
   @Get(':unique')
@@ -61,11 +62,11 @@ export class ProductController {
   @ApiOperation({ summary: 'Listar produtos por categoria' })
   async getByCategory(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Query(new PaginationPipe()) query: IPagintionProps,
+    @Query() query: PaginationDto,
   ) {
     return this.findByCategoryUC.handle({
       categoryId: id,
-      pagination: query,
+      pagination: query as any,
     });
   }
 

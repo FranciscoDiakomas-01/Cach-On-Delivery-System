@@ -37,6 +37,7 @@ export class CreateDeliveryManUseCase {
       deliveryOrders: [],
       events: [],
       notifications: undefined,
+      reviews: [],
     });
     const { raw, expiresAt } = await this.ForgotUseCase.handle({
       email: user.email,
