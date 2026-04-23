@@ -16,16 +16,28 @@ export default class AuthController {
   @ApiOperation({
     summary: 'Criação de  conta',
   })
-  public async register(@Body() data: RegisterDto) {
-    return await this.service.register(data);
+  public async register(@Body() dto: RegisterDto, @Res() res: Response) {
+    const { data } = await this.service.register(dto);
+    res.cookie('accessToken', data.token, {
+      expires: new Date(new Date().getTime() + 30 * 1000),
+      sameSite: 'strict',
+      httpOnly: true,
+    });
+    return res.send(data.entitie);
   }
 
   @Post('login')
   @ApiOperation({
     summary: 'Login em conta',
   })
-  public async login(@Body() data: LoginDto) {
-    return await this.service.login(data);
+  public async login(@Body() dto: LoginDto, @Res() res: Response) {
+    const { data } = await this.service.login(dto);
+    res.cookie('accessToken', data.token, {
+      expires: new Date(new Date().getTime() + 30 * 1000),
+      sameSite: 'strict',
+      httpOnly: true,
+    });
+    return res.send(data.entitie);
   }
 
   @Get('social/:provider')
@@ -47,15 +59,18 @@ export default class AuthController {
   public async callback(
     @Param('provider') provider: string,
     @Query('code') code: string,
-    @Res() response: Response,
+    @Res() res: Response,
   ) {
-    return await this.service.callback(
-      {
-        code,
-        provider,
-      },
-      response,
-    );
+    const { token, entitie } = await this.service.callback({
+      code,
+      provider,
+    });
+    res.cookie('accessToken', token, {
+      expires: new Date(new Date().getTime() + 30 * 1000),
+      sameSite: 'strict',
+      httpOnly: true,
+    });
+    return res.send(entitie);
   }
   @Post('forgot')
   @ApiOperation({

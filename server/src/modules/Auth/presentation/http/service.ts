@@ -44,13 +44,13 @@ export default class AuthService {
     return response;
   }
 
-  public async callback(dto: OAuthProviderDto, response: Response) {
+  public async callback(dto: OAuthProviderDto) {
     const data = await this.OauthCallbackUseCase.handle(dto);
-    const { token } = data;
-    const authLink =
+    /** const authLink =
       this.Config.get<string>('FRONT_URL') +
       `?token=${token}&provider=${dto.provider.toLocaleLowerCase()}`;
-    response.redirect(authLink);
+    response.redirect(authLink);**/
+    return data;
   }
   public async forgot(data: ForgotDto) {
     await this.ForgotUseCase.handle({
