@@ -70,7 +70,6 @@ async function main() {
   });
 
   console.log('👤 Users created');
-
   const brand = await prisma.brand.upsert({
     where: {
       title: 'Nike',
@@ -82,7 +81,6 @@ async function main() {
     },
     update: {},
   });
-
   const category = await prisma.category.upsert({
     where: {
       title: 'Shoes',

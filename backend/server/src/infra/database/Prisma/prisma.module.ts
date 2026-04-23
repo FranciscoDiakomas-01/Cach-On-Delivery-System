@@ -10,6 +10,7 @@ import {
   ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
   RECOMMENDATION_REPOSITORY,
+  REVIEW_REPOSITORY,
   USER_REPOSITORY,
   WISHLIST_REPOSITORY,
 } from 'src/core/constants';
@@ -24,6 +25,7 @@ import PrismaCouponRepository from './repositories/PrismaCouponRepository';
 import PrismaUserRepository from './repositories/PrismaUserRepository';
 import { PrismaCartRepository } from './repositories/PrismaCartRepository';
 import { PrismaOrderRepository } from './repositories/PrismaOrderRepository';
+import PrismaReviewRepository from './repositories/PrismaReviewRepository';
 @Global()
 @Module({
   providers: [
@@ -71,11 +73,16 @@ import { PrismaOrderRepository } from './repositories/PrismaOrderRepository';
       provide: ORDER_REPOSITORY,
       useClass: PrismaOrderRepository,
     },
+    {
+      provide: REVIEW_REPOSITORY,
+      useClass: PrismaReviewRepository,
+    },
 
     PrismaService,
   ],
   exports: [
     PrismaService,
+    REVIEW_REPOSITORY,
     ORDER_REPOSITORY,
     CART_REPOSITORY,
     CATEGORY_REPOSITORY,

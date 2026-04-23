@@ -26,6 +26,7 @@ import { UserModule } from './modules/User/presentation/http/module';
 import CartModule from './modules/Cart/presentation/http/module';
 import { ScheduleModule } from '@nestjs/schedule';
 import OrderModule from './modules/Order/presentation/http/module';
+import { ReviewModule } from './modules/Review/presentation/htpp/module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import OrderModule from './modules/Order/presentation/http/module';
     UserModule,
     CartModule,
     OrderModule,
+    ReviewModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),

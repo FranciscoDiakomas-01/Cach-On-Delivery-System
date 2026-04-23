@@ -3,6 +3,7 @@ import UserRole from './UserRole';
 import Cart from 'src/modules/Cart/domains/entities/Cart';
 import Order from 'src/modules/Order/domain/entities/Order';
 import Event from 'src/modules/Event/domains/entities/Event';
+import Review from 'src/modules/Review/domains/entities/Review';
 
 export interface IUser {
   id: string;
@@ -20,4 +21,5 @@ export interface IUser {
   events: Event[] | undefined;
   customerOrders: Order[] | undefined;
   deliveryOrders: Order[] | undefined;
+  reviews: Review[] | undefined;
 }

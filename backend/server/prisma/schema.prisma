@@ -47,8 +47,6 @@ enum OrderStatus {
   EXPIRED
 }
 
-
-
 enum Paymethod {
   CASH
   EXPRESS
@@ -56,6 +54,11 @@ enum Paymethod {
   TRANSFER
 }
 
+enum NotificationType {
+  APP
+  AUTH
+  ORDER
+}
 
 
 model User {
@@ -79,8 +82,6 @@ model User {
   reviews       Review[]
   @@map("users")
 }
-
-
 
 model Cart {
   id        String   @id @default(uuid())
@@ -225,13 +226,12 @@ model Coupon {
 
 model Notification {
   id String @id @default(uuid())
+  entitieId String?
   userId String
   title String
   body String
-  type String?
-  metadata Json?
+  type NotificationType 
   isRead Boolean @default(false)
-  readAt DateTime?
   createdAt DateTime @default(now())
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@map("notifications")
