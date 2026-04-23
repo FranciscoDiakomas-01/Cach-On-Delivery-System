@@ -200,12 +200,3 @@ Campos:
 
 ---
 
-# 13. Próximos passos
-
-- Definir arquitetura (monólito modular vs microservices)
-- Escolher broker de eventos (Kafka ou RabbitMQ)
-- Modelagem de banco de dados
-- Desenho dos fluxos de saga (checkout → payment → delivery)
-- Implementação backend (NestJS recomendado)
-
----
