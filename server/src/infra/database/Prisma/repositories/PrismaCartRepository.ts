@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
 import { Injectable } from '@nestjs/common';
 import Cart from 'src/modules/Cart/domains/entities/Cart';
 import CartRepository from 'src/modules/Cart/domains/repositories/abstraction';
@@ -134,8 +130,9 @@ export class PrismaCartRepository implements CartRepository {
         reserved: {
           decrement: qty,
         },
-        // available NÃO volta
-        // porque já saiu do sistema
+        sellCount: {
+          increment: 1,
+        },
       },
     });
   }

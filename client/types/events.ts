@@ -1,0 +1,7 @@
+export enum EventType {
+  VIEW = "VIEW",
+  WISHLIST = "WISHLIST",
+  CHECKOUT = "CHECKOUT",
+  PURCHASE = "PURCHASE",
+  UNCHEKOUT = "UNCHEKOUT",
+}

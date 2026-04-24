@@ -1,9 +1,9 @@
-import Cart from 'src/modules/Cart/domains/entities/Cart';
-import { IUser } from 'src/modules/User/domains/entities/User';
-import { OrderStatus } from './OrderStatus';
-import { Paymethod } from './Paymethod';
-import Adress from './Adress';
-import Coupon from 'src/modules/Coupon/domain/entities/Coupun';
+import { OrderStatus } from "./OrderStatus";
+import { Paymethod } from "./Paymethod";
+import Adress from "./Adress";
+import { IUser } from "./User";
+import Cart from "./Cart";
+import Coupon from "./Coupun";
 
 export default interface Order {
   id: string;

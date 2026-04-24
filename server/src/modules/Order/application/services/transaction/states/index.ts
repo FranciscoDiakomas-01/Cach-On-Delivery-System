@@ -130,11 +130,10 @@ export class DeliverOrderService extends UpdateOrderStatusService {
 
     if (cart) {
       for (const product of cart.items) {
-        await this.cartRepoSitory.releaseStock(
+        await this.cartRepoSitory.decreaseStock(
           product.productId,
           product.quantity,
         );
-
         this.eventEmmiter.emit('product.purchase', {
           userid: order.customerId,
           productid: product.product,
