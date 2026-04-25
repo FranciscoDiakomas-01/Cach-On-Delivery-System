@@ -14,10 +14,19 @@ import { Stat } from "@/types";
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
+import { TrendingUp } from "lucide-react";
+import {
+  Label,
+  PolarGrid,
+  PolarRadiusAxis,
+  RadialBar,
+  RadialBarChart,
+} from "recharts";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -27,8 +36,9 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-
-export const description = "An interactive bar chart";
+import { ChartPayemnt } from "@/components/charts/Payments";
+import BrandTables from "@/components/tables/Brands";
+import brands from "@/mocks/brands";
 
 const chartData = [
   { month: "Jan", sales: 120000 },
@@ -79,7 +89,6 @@ export default function Page() {
       isCoin: false,
     },
   ];
-
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof chartConfig>("sales");
 
@@ -90,8 +99,8 @@ export default function Page() {
     [],
   );
   return (
-    <article className=" min-h-[300dvh] w-full flex flex-col gap-4">
-      <header className="flex justify-between items-center gap-4 bg-white p-3 py-5 sticky top-15 border-b border-dashed z-3">
+    <article className=" min-h-[300dvh] w-full flex flex-col gap-6">
+      <header className="flex justify-between items-center gap-4 dark:bg-zinc-950 bg-white p-3 py-5 sticky top-15 border-b border-dashed z-3">
         <div className="flex  gap-4">
           <DatePickerWithRange onchange={(date) => {}} />
           <Button variant={"outline"} className="font-normal">
@@ -127,7 +136,7 @@ export default function Page() {
           entregas.
         </p>
       </span>
-      <span className="grid gap-2 px-3 lg:grid-cols-4">
+      <span className="grid gap-4 px-3 lg:grid-cols-4">
         {Array.isArray(stats) &&
           stats.length > 0 &&
           stats.map((item, index) => (
@@ -140,7 +149,7 @@ export default function Page() {
             />
           ))}
       </span>
-      <span className=" px-3 flex gap-3">
+      <span className="flex px-3  gap-4">
         <Card className="py-0 flex-1">
           <CardHeader className="flex flex-col items-stretch border-b p-0! sm:flex-row">
             <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:py-0!">
@@ -154,10 +163,12 @@ export default function Page() {
                   <button
                     key={chart}
                     data-active={activeChart === chart}
-                    className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-t-0 sm:border-l sm:px-8 sm:py-6"
+                    className="relative flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-t-0 sm:border-l sm:px-8 sm:py-6"
                     onClick={() => setActiveChart(chart)}
                   >
-                    <span className="text-xs text-muted-foreground">Total</span>
+                    <span className="text-xs text-muted-foreground">
+                      Total faturado
+                    </span>
                     <span className="text-lg leading-none font-bold sm:text-3xl">
                       {total[key as keyof typeof total].toLocaleString()} kz
                     </span>
@@ -166,8 +177,8 @@ export default function Page() {
               })}
             </div>
           </CardHeader>
-          <CardContent className="px-2 sm:p-6">
-            <ChartContainer config={chartConfig} className="h-60 w-full">
+          <CardContent className=" sm:p-6">
+            <ChartContainer config={chartConfig} className="h-40 w-full">
               <BarChart data={chartData}>
                 <CartesianGrid vertical={false} />
 
@@ -182,11 +193,23 @@ export default function Page() {
                     />
                   }
                 />
-                <Bar dataKey="sales" fill="#2563eb" radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="sales"
+                  className="h-full"
+                  fill="#22c55e"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>
+        <div className="lg:w-[50%]">
+          <ChartPayemnt />
+        </div>
+      </span>
+
+      <span className="flex px-3  w-full gap-4">
+        <BrandTables data={brands} />
       </span>
     </article>
   );

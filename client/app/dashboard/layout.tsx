@@ -8,7 +8,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="bg-gray-100 ">
+    <main className="bg-gray-100 dark:bg-zinc-950 ">
       <Sidebar entity={UserRole.ADMIN} />
       <Header />
       <section className=" flex w-[85.7%] place-self-end pt-15  min-h-screen">

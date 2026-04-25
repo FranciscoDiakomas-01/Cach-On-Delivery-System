@@ -1,14 +1,30 @@
 "use client";
 
 import {
+  BadgePercent,
+  BarChart3,
   Box,
+  Clock,
+  DollarSign,
+  Heart,
   LayoutGrid,
   LogOut,
+  Map,
+  MapPin,
+  MessageCircle,
   Package,
+  Search,
   Send,
+  Settings,
   Shirt,
   ShoppingCart,
   SlidersHorizontal,
+  Sparkle,
+  Star,
+  Tags,
+  Truck,
+  User,
+  User2,
   Users,
 } from "lucide-react";
 import { CommandSearch } from "./CommandSearch";
@@ -25,51 +41,80 @@ type Props = {
 
 const menuMap: Record<UserRole, INaLink[]> = {
   ADMIN: [
+    { icon: <LayoutGrid size={20} />, title: "Dashboard", to: "/admin" },
+
+    { icon: <Users size={20} />, title: "Clientes", to: "/admin/customers" },
+    { icon: <Truck size={20} />, title: "Entregadores", to: "/admin/delivery" },
+    { icon: <Package size={20} />, title: "Produtos", to: "/admin/products" },
+    { icon: <Tags size={20} />, title: "Categorias", to: "/admin/categories" },
+    { icon: <ShoppingCart size={20} />, title: "Pedidos", to: "/admin/orders" },
+    { icon: <Star size={20} />, title: "Avaliações", to: "/admin/reviews" },
     {
-      icon: <LayoutGrid size={20} />,
-      title: "Inicial",
-      to: "/dashboard",
+      icon: <BarChart3 size={20} />,
+      title: "Relatórios",
+      to: "/admin/reports",
     },
     {
-      icon: <SlidersHorizontal size={20} />,
-      title: "Marcas",
-      to: "/dashboard",
-    },
-    {
-      icon: <Package size={20} />,
-      title: "Categorias",
-      to: "/dashboard",
-    },
-    {
-      icon: <Shirt size={20} />,
-      title: "Produtos",
-      to: "/dashboard",
-    },
-    {
-      icon: <ShoppingCart size={20} />,
-      title: "Pedidos",
-      to: "/dashboard",
-    },
-    {
-      icon: <Users size={20} />,
-      title: "Usuários",
-      to: "/dashboard",
-    },
-    {
-      icon: <Send size={20} />,
-      title: "Reviews",
-      to: "/dashboard",
+      icon: <Settings size={20} />,
+      title: "Configurações",
+      to: "/admin/settings",
     },
   ],
-  CUSTOMER: [],
-  DELIVERY: [],
+  CUSTOMER: [
+    { icon: <LayoutGrid size={20} />, title: "Início", to: "/" },
+
+    { icon: <Search size={20} />, title: "Explorar Produtos", to: "/products" },
+
+    { icon: <Heart size={20} />, title: "Favoritos", to: "/wishlist" },
+
+    { icon: <ShoppingCart size={20} />, title: "Carrinho", to: "/cart" },
+
+    { icon: <Package size={20} />, title: "Meus Pedidos", to: "/orders" },
+
+    { icon: <MapPin size={20} />, title: "Endereços", to: "/addresses" },
+
+    { icon: <MessageCircle size={20} />, title: "Suporte", to: "/support" },
+
+    { icon: <User2 size={20} />, title: "Perfil", to: "/profile" },
+  ],
+  DELIVERY: [
+    { icon: <LayoutGrid size={20} />, title: "Painel", to: "/delivery" },
+
+    {
+      icon: <Truck size={20} />,
+      title: "Entregas atribuídas",
+      to: "/delivery/tasks",
+    },
+
+    { icon: <Map size={20} />, title: "Mapa de rotas", to: "/delivery/map" },
+
+    {
+      icon: <Package size={20} />,
+      title: "Histórico de entregas",
+      to: "/delivery/history",
+    },
+
+    {
+      icon: <DollarSign size={20} />,
+      title: "Pagamentos COD",
+      to: "/delivery/cash",
+    },
+
+    {
+      icon: <Clock size={20} />,
+      title: "Disponibilidade",
+      to: "/delivery/availability",
+    },
+
+    { icon: <User size={20} />, title: "Perfil", to: "/delivery/profile" },
+  ],
 };
 
 export default function Sidebar({ entity }: Props) {
   const items = menuMap[entity];
   const [selected, setSelected] = useState(0);
   return (
-    <aside className="w-68 bg-white border-r border-dashed  fixed bottom-0 h-full pt-19 border-gray-200 flex flex-col pb-4 gap-4">
+    <aside className="w-68 bg-white dark:bg-zinc-950  border-r border-dashed  fixed bottom-0 h-full pt-19  flex flex-col pb-4 gap-4">
       <div className="px-3">
         <CommandSearch placeholder="Buscar" />
       </div>
@@ -82,9 +127,9 @@ export default function Sidebar({ entity }: Props) {
               setSelected(index);
             }}
             className={clsx(
-              "p-2 py-3 transition-all  rounded-sm  text-sm flex items-center gap-2 hover:bg-gray-100 hover:opacity-100",
+              "p-2 py-3 transition-all  rounded-sm  text-sm flex items-center gap-2 hover:bg-gray-100 dark:hover:text-black hover:opacity-100",
               {
-                "bg-linear-to-r via-black/80 text-white from-black/90 to-indigo-500/60":
+                "bg-linear-to-r via-black/80 dark:via-white/80 text-white from-black/90 dark:from-white/90 dark:text-black to-green-500/60":
                   selected === index,
                 "opacity-70": selected !== index,
               },
@@ -103,7 +148,13 @@ export default function Sidebar({ entity }: Props) {
             Acompanhe o desempenho da sua loja, incluindo pedidos, entregas e
             receita ao longo do tempo.
           </p>
-          <Button size={"lg"}>Ver relatórios</Button>
+          <Button
+            className="bg-linear-to-r via-black/80 dark:via-white/80 text-white from-black/90 dark:from-white/90 dark:text-black to-green-500/60"
+            size={"lg"}
+          >
+            <Sparkle />
+            Ver relatórios
+          </Button>
         </span>
       </div>
     </aside>

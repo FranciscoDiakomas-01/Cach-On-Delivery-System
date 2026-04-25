@@ -6,9 +6,7 @@ import {
   ChevronDown,
   CloudSync,
   Heart,
-  LogOut,
-  Sun,
-  UserIcon,
+  Settings,
 } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -28,12 +26,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CommandSearch } from "./CommandSearch";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 
 export default function Header() {
+  const { setTheme } = useTheme();
   return (
-    <header className="h-16 z-4 bg-white border-b border-gray-200 w-full fixed top-0 left-0 pr-5 flex  items-center gap-5 border-dashed ">
+    <header className="h-16 z-4 bg-white dark:bg-zinc-950  border-b w-full fixed top-0 left-0 pr-5 flex  items-center gap-5 border-dashed ">
       <div className="border-r relative lg:w-68 px-3 h-full flex  items-center gap-2 border-dashed  ">
-        <Image src={logo} alt="logo" className="h-7 w-7" />
+        <Image src={logo} alt="logo" className="h-7 w-7 dark:invert" />
         <h1 className=" text-2xl  tracking-tight text-balance">Sellify</h1>
         <ArrowLeftToLine className="absolute right-2" size={19} />
       </div>
@@ -52,9 +53,27 @@ export default function Header() {
           <Button size={"icon"} variant={"outline"}>
             <Bell />
           </Button>
-          <Button size={"icon"} variant={"outline"}>
-            <Sun />
-          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                <span className="sr-only">Toggle theme</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setTheme("light")}>
+                <Sun /> Claro
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>
+                <Moon /> Escuro
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("system")}>
+                <Settings /> Sistema
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button variant={"outline"} className="font-normal">
             <Heart />
             Favoritos
