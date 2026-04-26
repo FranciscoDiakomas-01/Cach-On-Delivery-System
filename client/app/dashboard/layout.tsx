@@ -9,7 +9,7 @@ export default function RootLayout({
 }) {
   return (
     <main className="bg-gray-100 dark:bg-zinc-950 ">
-      <Sidebar entity={UserRole.ADMIN} />
+      <Sidebar entity={UserRole.CUSTOMER} />
       <Header />
       <section className=" flex w-[85.7%]  mb-10 place-self-end pt-15  min-h-screen">
         {children}
