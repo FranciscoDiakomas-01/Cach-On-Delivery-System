@@ -10,4 +10,6 @@ export interface ICategory {
   level: number;
   createdAt: Date;
   updatedAt: Date;
+  parent: ICategory | undefined;
+  children: ICategory[];
 }

@@ -22,9 +22,9 @@ export default function LoginPage() {
       </div>
       <div className="relative hidden bg-muted lg:block">
         <Image
-          src={asideImage}
+          src={logo}
           alt="Image"
-          className="absolute  h-full w-full "
+          className="absolute object-contain  h-full w-full  dark:invert"
         />
       </div>
     </div>

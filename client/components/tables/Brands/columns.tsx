@@ -12,8 +12,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import { renderCell } from "@/components/tables/renderCell";
+import { useState } from "react";
 
 export const column: ColumnDef<Brand>[] = [
   {
@@ -56,9 +65,8 @@ export const column: ColumnDef<Brand>[] = [
     header: "Descrição",
     cell: ({ getValue }) => {
       const content = getValue() as string;
-
-      if (content.length >= 50) {
-        return content.slice(0, 49) + "...";
+      if (content.length >= 60) {
+        return content.slice(0, 59) + " ...";
       }
       return content;
     },
@@ -88,7 +96,7 @@ export const column: ColumnDef<Brand>[] = [
     },
     cell: ({ row }) => {
       const brand = row.original;
-
+      const [open, setOpen] = useState(false);
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -101,27 +109,26 @@ export const column: ColumnDef<Brand>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acções </DropdownMenuLabel>
 
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(brand.id)}
-            >
-              Copiar ID
-            </DropdownMenuItem>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  setOpen(true);
+                }}
+              >
+                <Edit /> Editar
+              </DropdownMenuItem>
 
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Editar marca</DialogTitle>
+                  <DialogDescription>
+                    Aqui vais editar os dados da marca.
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
             <DropdownMenuSeparator />
-
-            <DropdownMenuItem
-              onClick={() => console.log("View brand", brand.id)}
-            >
-              <Eye /> Ver
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              className="text-amber-500"
-              onClick={() => console.log("Edit brand", brand.id)}
-            >
-              <Edit /> Editar
-            </DropdownMenuItem>
-
             <DropdownMenuItem
               className="text-red-500"
               onClick={() => console.log("Delete brand", brand.id)}

@@ -77,12 +77,6 @@ export default function Page() {
       isCoin: true,
     },
     {
-      value: 68,
-      title: "Taxa de Entrega (%)",
-      description: "Eficiência logística",
-      isCoin: false,
-    },
-    {
       value: 320,
       title: "Novos Clientes",
       description: "Aquisição recente",
@@ -99,7 +93,7 @@ export default function Page() {
     [],
   );
   return (
-    <article className=" min-h-[300dvh] w-full flex flex-col gap-6">
+    <article className="w-full flex flex-col gap-6">
       <header className="flex justify-between items-center gap-4 dark:bg-zinc-950 bg-white p-3 py-5 sticky top-15 border-b border-dashed z-3">
         <div className="flex  gap-4">
           <DatePickerWithRange onchange={(date) => {}} />
@@ -136,7 +130,7 @@ export default function Page() {
           entregas.
         </p>
       </span>
-      <span className="grid gap-4 px-3 lg:grid-cols-4">
+      <span className="grid gap-4 px-3 lg:grid-cols-3">
         {Array.isArray(stats) &&
           stats.length > 0 &&
           stats.map((item, index) => (
@@ -203,7 +197,7 @@ export default function Page() {
             </ChartContainer>
           </CardContent>
         </Card>
-        <div className="lg:w-[50%]">
+        <div className="lg:w-[40%]">
           <ChartPayemnt />
         </div>
       </span>

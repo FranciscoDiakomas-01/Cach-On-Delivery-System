@@ -1,3 +1,6 @@
+import Brand from "./Brand";
+import { ICategory } from "./category";
+
 export interface Product {
   id: string;
   title: string;
@@ -17,4 +20,6 @@ export interface Product {
   createdAt: Date;
   updatedAt: Date;
   categoryId: string;
+  brand: Brand;
+  category: ICategory;
 }

@@ -39,9 +39,9 @@ export function CommandSearch({ placeholder }: { placeholder: string }) {
   function handleSearch() {
     const params = new URLSearchParams(searchParams.toString());
     if (query) {
-      params.set("q", query);
+      params.set("search", query);
     } else {
-      params.delete("q");
+      params.delete("search");
     }
     router.push(`?${params.toString()}`);
     setOpen(false);

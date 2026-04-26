@@ -8,6 +8,6 @@ export default interface Review {
   rating: number;
   content: string;
   readonly createdAt: Date;
-  user: IUser | undefined;
-  order: Order | undefined;
+  user: IUser;
+  order: Order;
 }

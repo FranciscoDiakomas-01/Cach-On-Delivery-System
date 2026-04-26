@@ -1,24 +1,20 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import {
-  BadgePercent,
   BarChart3,
   Box,
   Clock,
   DollarSign,
   Heart,
   LayoutGrid,
-  LogOut,
   Map,
   MapPin,
   MessageCircle,
   Package,
   Search,
-  Send,
   Settings,
-  Shirt,
   ShoppingCart,
-  SlidersHorizontal,
   Sparkle,
   Star,
   Tags,
@@ -41,23 +37,33 @@ type Props = {
 
 const menuMap: Record<UserRole, INaLink[]> = {
   ADMIN: [
-    { icon: <LayoutGrid size={20} />, title: "Dashboard", to: "/admin" },
-
-    { icon: <Users size={20} />, title: "Clientes", to: "/admin/customers" },
-    { icon: <Truck size={20} />, title: "Entregadores", to: "/admin/delivery" },
-    { icon: <Package size={20} />, title: "Produtos", to: "/admin/products" },
-    { icon: <Tags size={20} />, title: "Categorias", to: "/admin/categories" },
-    { icon: <ShoppingCart size={20} />, title: "Pedidos", to: "/admin/orders" },
-    { icon: <Star size={20} />, title: "Avaliações", to: "/admin/reviews" },
+    { icon: <LayoutGrid size={20} />, title: "Dashboard", to: "/dashboard" },
+    { icon: <Users size={20} />, title: "Usuários", to: "/dashboard/users" },
     {
-      icon: <BarChart3 size={20} />,
-      title: "Relatórios",
-      to: "/admin/reports",
+      icon: <Package size={20} />,
+      title: "Produtos",
+      to: "/dashboard/products",
     },
+    {
+      icon: <Tags size={20} />,
+      title: "Categorias",
+      to: "/dashboard/category",
+    },
+    {
+      icon: <Box size={20} />,
+      title: "Coupun",
+      to: "/dashboard/coupuns",
+    },
+    {
+      icon: <ShoppingCart size={20} />,
+      title: "Pedidos",
+      to: "/dashboard/orders",
+    },
+    { icon: <Star size={20} />, title: "Avaliações", to: "/dashboard/reviews" },
     {
       icon: <Settings size={20} />,
       title: "Configurações",
-      to: "/admin/settings",
+      to: "/dashboard/settings",
     },
   ],
   CUSTOMER: [
@@ -112,26 +118,31 @@ const menuMap: Record<UserRole, INaLink[]> = {
 
 export default function Sidebar({ entity }: Props) {
   const items = menuMap[entity];
-  const [selected, setSelected] = useState(0);
+  const pathname = usePathname();
+  const isActive = (to: string) => {
+    if (to === "/dashboard") {
+      return pathname === "/dashboard";
+    }
+
+    return pathname.startsWith(to);
+  };
   return (
     <aside className="w-68 bg-white dark:bg-zinc-950  border-r border-dashed  fixed bottom-0 h-full pt-19  flex flex-col pb-4 gap-4">
       <div className="px-3">
         <CommandSearch placeholder="Buscar" />
       </div>
       <nav className="flex flex-col gap-2  px-3">
-        {items.map((item, index) => (
+        {items.map((item) => (
           <Link
             key={item.title}
             href={item.to}
-            onClick={() => {
-              setSelected(index);
-            }}
             className={clsx(
-              "p-2 py-3 transition-all  rounded-sm  text-sm flex items-center gap-2 hover:bg-gray-100 dark:hover:text-black hover:opacity-100",
+              "p-2 py-3 transition-all rounded-sm text-sm flex items-center gap-2 hover:bg-gray-100 dark:hover:text-black hover:opacity-100",
               {
                 "bg-linear-to-r via-black/80 dark:via-white/80 text-white from-black/90 dark:from-white/90 dark:text-black to-green-500/60":
-                  selected === index,
-                "opacity-70": selected !== index,
+                  isActive(item.to),
+
+                "opacity-70": !isActive(item.to),
               },
             )}
           >

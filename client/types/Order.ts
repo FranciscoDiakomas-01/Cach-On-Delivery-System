@@ -18,9 +18,10 @@ export default interface Order {
   paidAt: Date | undefined;
   createdAt: Date;
   updatedAt: Date;
-  user: IUser;
   cart: Cart;
   coupon: Coupon | undefined;
   address: Adress;
   deliveryManId: string;
+  customer: IUser;
+  deliveryman: IUser;
 }

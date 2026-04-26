@@ -82,8 +82,8 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <div className=" flex items-center gap-1">
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage src="" />
+                  <AvatarFallback>FD</AvatarFallback>
                 </Avatar>
                 <ChevronDown size={18} />
               </div>
