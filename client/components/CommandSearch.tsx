@@ -64,7 +64,7 @@ export function CommandSearch({ placeholder }: { placeholder: string }) {
           <SearchIcon />
         </InputGroupAddon>
         <InputGroupButton>
-          <CommandShortcut>⌘P</CommandShortcut>
+          <CommandShortcut>⌘K</CommandShortcut>
         </InputGroupButton>
       </InputGroup>
 

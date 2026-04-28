@@ -12,7 +12,7 @@ export interface Product {
   sku: string;
   price: number;
   compareAtPrice?: number;
-  imageUrl?: string;
+  imageUrl: string;
   sellCount: number;
   available: number;
   reserved: number;

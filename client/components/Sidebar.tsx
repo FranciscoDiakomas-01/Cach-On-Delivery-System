@@ -30,6 +30,7 @@ import { INaLink } from "@/types/NavLink";
 import { useState } from "react";
 import clsx from "clsx";
 import Link from "next/link";
+import { HomeIcon, MansIcon, TagIcons } from "@/components/icons";
 
 type Props = {
   entity: UserRole;
@@ -37,15 +38,15 @@ type Props = {
 
 const menuMap: Record<UserRole, INaLink[]> = {
   ADMIN: [
-    { icon: <LayoutGrid size={20} />, title: "Dashboard", to: "/dashboard" },
-    { icon: <Users size={20} />, title: "Usuários", to: "/dashboard/users" },
+    { icon: <HomeIcon size={20} />, title: "Dashboard", to: "/dashboard" },
+    { icon: <MansIcon size={20} />, title: "Usuários", to: "/dashboard/users" },
     {
       icon: <Package size={20} />,
       title: "Produtos",
       to: "/dashboard/products",
     },
     {
-      icon: <Tags size={20} />,
+      icon: <TagIcons size={20} />,
       title: "Categorias",
       to: "/dashboard/category",
     },
@@ -69,7 +70,7 @@ const menuMap: Record<UserRole, INaLink[]> = {
   CUSTOMER: [
     { icon: <LayoutGrid size={20} />, title: "Início", to: "/" },
 
-    { icon: <Search size={20} />, title: "Explorar Produtos", to: "/products" },
+    { icon: <Search size={20} />, title: "Explorar Produtos", to: "/shop" },
 
     { icon: <Heart size={20} />, title: "Favoritos", to: "/wishlist" },
 
@@ -137,7 +138,7 @@ export default function Sidebar({ entity }: Props) {
             key={item.title}
             href={item.to}
             className={clsx(
-              "p-2 py-3 transition-all rounded-sm text-sm flex items-center gap-2 hover:bg-gray-100 dark:hover:text-black hover:opacity-100",
+              "p-2 stroke-white dark:stroke-black py-3 transition-all rounded-sm text-sm flex items-center gap-2 hover:bg-gray-100 dark:hover:text-black hover:opacity-100",
               {
                 "bg-linear-to-r via-black/80 dark:via-white/80 text-white from-black/90 dark:from-white/90 dark:text-black to-green-500/60":
                   isActive(item.to),

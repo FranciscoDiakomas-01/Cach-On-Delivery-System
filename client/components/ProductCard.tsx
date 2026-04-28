@@ -19,19 +19,31 @@ import {
   Tag,
   Store,
   Box,
+  ShoppingCartIcon,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 import { Product } from "@/types/Product";
 import ProductImage from "./ProductImage";
+import { ShopCartIcon } from "./icons";
+import { useState } from "react";
 
 type Props = {
   product: Product;
+  mode?: "dashboard" | "store";
 };
 
-export default function ProductCard({ product }: Props) {
+export default function ProductCard({ product  ,mode }: Props) {
+
+  const [animate, setAnimate] = useState(false);
+
+  const handleClick = () => {
+    setAnimate(true);
+
+    setTimeout(() => setAnimate(false), 600);
+  };
   return (
-    <Card className="p-2 flex flex-col gap-3 hover:shadow-sm rounded-md transition">
+    <Card className="p-2 flex flex-col gap-3 hover:shadow-sm rounded-md transition w-full">
       <ProductImage alt={product.title} src={product.imageUrl} />
 
       <div className="flex flex-col gap-1">
@@ -49,6 +61,9 @@ export default function ProductCard({ product }: Props) {
         <Badge variant="outline" className="gap-1">
           <Tag className="w-3 h-3" />
           {product.category?.title}
+        </Badge>  <Badge variant="outline" className="gap-1">
+          <ShopCartIcon className="w-3 h-3" />
+          {product.available} unidade(s)
         </Badge>
       </div>
 
@@ -72,7 +87,9 @@ export default function ProductCard({ product }: Props) {
         )}
       </div>
       {/* STOCK INTELLIGENCE */}
-      <div className="grid grid-cols-3 gap-3 border rounded-md py-2">
+
+      {
+        mode === "dashboard" &&  <div className="grid grid-cols-3 gap-3 border rounded-md py-2">
         <div className="flex flex-col gap-1 border-r text-center pr-3">
           <span className="text-xs">Stock</span>
           <span className=" text-muted-foreground">{product.available}</span>
@@ -87,6 +104,8 @@ export default function ProductCard({ product }: Props) {
           <span className=" text-muted-foreground ">{product.sellCount}</span>
         </div>
       </div>
+      }
+     
 
       {/* STATUS + ACTIONS */}
       <div className="flex items-center justify-between pt-2">
@@ -94,26 +113,48 @@ export default function ProductCard({ product }: Props) {
           {product.isActive ? "Ativo" : "Inativo"}
         </Badge>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <MoreHorizontal className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
+       <div className="flex items-center justify-between pt-2">
 
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Edit className="w-4 h-4 mr-2" />
-              Editar
-            </DropdownMenuItem>
+  {mode === "dashboard" ? (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <MoreHorizontal className="w-4 h-4" />
+        </Button>
+      </DropdownMenuTrigger>
 
-            <DropdownMenuItem className="text-red-500">
-              <Trash className="w-4 h-4 mr-2" />
-              Remover
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem>
+          <Edit className="w-4 h-4 mr-2" />
+          Editar
+        </DropdownMenuItem>
+
+        <DropdownMenuItem className="text-red-500">
+          <Trash className="w-4 h-4 mr-2" />
+          Remover
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  ) : (
+    null
+  )}
+</div>
+
       </div>
+        <Button
+      onClick={handleClick}
+      className="gap-2 rounded-md mt-2"
+      variant="outline"
+      size="lg"
+    >
+      <ShoppingCartIcon
+  className={`transition-all duration-700 ${
+    animate ? "-translate-x-3 -translate-y-1 scale-125 opacity-70" : ""
+  }`}
+      />
+      Adicionar
+    </Button>
+
     </Card>
   );
 }
