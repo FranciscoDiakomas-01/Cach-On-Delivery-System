@@ -7,6 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,8 @@ import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
 import CartItem from "@/types/CartItem";
 import { productsMock } from "@/mocks/productsMock";
 import { Badge } from "./ui/badge";
+import Link from "next/link";
+import { ShopCartIcon } from "./icons";
 
 export function CartSheet() {
   const [cart, setCart] = useState<CartItem[]>([
@@ -101,7 +104,7 @@ export function CartSheet() {
       </SheetTrigger>
 
       <SheetContent className="w-full sm:max-w-md flex flex-col">
-        <SheetHeader className="item-center bg-gray-100 border-b justify-center flex h-15">
+        <SheetHeader className="item-center dark:bg-white/4 bg-gray-100 border-b justify-center flex h-15">
           <SheetTitle>Seu Carrinho</SheetTitle>
         </SheetHeader>
 
@@ -123,7 +126,7 @@ export function CartSheet() {
                 <img
                   src={item.product.imageUrl}
                   alt={item.product.title}
-                  className="h-full r rounded-md bg-gray-100 w-full"
+                  className="h-full r rounded-md dark:bg-white/10 bg-gray-100 w-full"
                 />
 
                 <div className="flex flex-col gap-2">
@@ -183,18 +186,24 @@ export function CartSheet() {
 
         {/* Resumo */}
         <div className="space-y-2 px-3">
-          <div className="flex justify-between text-sm">
-            <span>Subtotal</span>
+          <div className="flex justify-between opacity-50 text-xs">
+            <span>Valor a se pagar</span>
             <span>{subtotal.toLocaleString()} Kz</span>
           </div>
 
-          <div className="flex justify-between text-sm font-medium">
+          <div className="flex justify-between scroll-m-20 text-2xl font-semibold tracking-tight">
             <span>Total</span>
             <span>{subtotal.toLocaleString()} Kz</span>
           </div>
-          <Button size={"lg"} className="mt-4 w-full mb-3">
-            Finalizar Compra
-          </Button>
+
+          <SheetClose asChild className="w-full">
+            <Button size={"lg"} className="mt-4 w-full mb-3">
+              <Link href={"/shop/checkout"} className="flex gap-2 item-center">
+                <ShopCartIcon />
+                Finalizar Compra
+              </Link>
+            </Button>
+          </SheetClose>
         </div>
       </SheetContent>
     </Sheet>
